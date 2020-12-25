@@ -27,11 +27,6 @@ input[type="submit"], button[type="submit"] {
   font-size: 14px;
   padding: 15px 10px;
 }  
-.single-promo {margin-bottom: 30px}    
-.single-product-widget, .footer-about-us, .footer-menu {
-  margin-bottom: 60px;
-}
-    
     
 .product-widget-area .zigzag-bottom {
   bottom: -50px;
@@ -103,9 +98,7 @@ div.cart-collaterals ul.products li.product {
   font-size: 16px;
   padding: 8px 20px;
 }    
-.single-promo {
-  margin-bottom: 30px;
-} 
+
 .section-title {
   font-size: 35px;
 }  
