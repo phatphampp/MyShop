@@ -20,16 +20,18 @@ create table Origins (
 	OriginDescription NVARCHAR(1000) NOT NULL
 );
 
-create table Producs (
-	ProducId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	ProducName NVARCHAR(200) NOT NULL,
-	ProducDescription NVARCHAR(1000) NOT NULL,
-	ProducImage NVARCHAR(200),
+create table Products (
+	ProductId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	ProductName NVARCHAR(200) NOT NULL,
+	ProductDescription NVARCHAR(1000) NOT NULL,
+	ProductImage NVARCHAR(200),
     ProductQuantity INT,
     ProductPrice INT,
     ProductView INT DEFAULT 0,
     CategoryId INT unsigned,
     OriginId INT unsigned,
+    ProducerId INT unsigned,
     foreign key (CategoryId) references categories(CategoryId),
-    foreign key (OriginId) references origins(OriginId)
+    foreign key (OriginId) references origins(OriginId),
+    foreign key (ProducerId) references Producers(ProducerId)
 );

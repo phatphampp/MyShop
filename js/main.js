@@ -6,8 +6,8 @@ jQuery(document).ready(function($){
     
     
     $('.product-carousel').owlCarousel({
-        loop:true,
-        nav:true,
+        // loop:true,
+        // nav:true,
         margin:20,
         responsiveClass:true,
         responsive:{
