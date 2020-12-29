@@ -35,7 +35,21 @@
     <![endif]-->
   </head>
   <body>
-    
+  <?php
+    $username = "root"; // Khai báo username
+    $password = "";      // Khai báo password
+    $server   = "localhost";   // Khai báo server
+    $dbname   = "vehicles_store";      // Khai báo database
+
+    // Kết nối database tintuc
+    $connect = new mysqli($server, $username, $password, $dbname);
+
+    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+    if ($connect->connect_error) {
+        die("Không kết nối :" . $conn->connect_error);
+        exit();
+    }
+  ?>            
     <div class="header-area">
         <div class="container">
             <div class="row">
@@ -51,7 +65,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                     <div class="header-right">
                         <ul class="list-unstyled list-inline">
                             <li class="dropdown dropdown-small">
@@ -73,7 +87,7 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div> <!-- End header area -->
@@ -110,13 +124,10 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="index.html">Home</a></li>
-                        <li><a href="shop.html">Shop page</a></li>
-                        <li><a href="single-product.html">Single product</a></li>
-                        <li><a href="cart.html">Cart</a></li>
-                        <li><a href="checkout.html">Checkout</a></li>
-                        <li><a href="#">Category</a></li>
-                        <li><a href="#">Others</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="shop.php">Shop</a></li>
+                        <li><a href="single-product.html">For Women</a></li>
+                        <li><a href="single-product.html">For Women</a></li>
+                        <li><a href="cart.html">For Kid</a></li>
                     </ul>
                 </div>  
             </div>
@@ -224,29 +235,13 @@
                         <h2 class="section-title">Latest Products</h2>
                         <div class="product-carousel">
                         <?php
-                            $username = "root"; // Khai báo username
-                            $password = "";      // Khai báo password
-                            $server   = "localhost";   // Khai báo server
-                            $dbname   = "vehicles_store";      // Khai báo database
-
-                            // Kết nối database tintuc
-                            $connect = new mysqli($server, $username, $password, $dbname);
-
-                            //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
-                            if ($connect->connect_error) {
-                                die("Không kết nối :" . $conn->connect_error);
-                                exit();
-                            }
-
-                            //Khai báo giá trị ban đầu, nếu không có thì khi chưa submit câu lệnh insert sẽ báo lỗi
-                            
-
-                            //Lấy giá trị POST từ form vừa submit
                             $sql = "SELECT * FROM Products";
                             $result = $connect->query($sql);
-                                    
-                            while ($row = mysqli_fetch_array($result))
+                                 
+                            for ($x = 0; $x < 5; $x++)
                             {
+                                $row = mysqli_fetch_array($result)
+
                         ?>
                             <div class="single-product">
                                 <div class="product-f-image">
@@ -268,233 +263,74 @@
                         ?>
                         </div>
                         <div class="product-carousel">
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-1.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                            <?php
+                                for ($x = 0; $x < 5; $x++)
+                                {
+                                $row = mysqli_fetch_array($result)
+                            ?>
+                                <div class="single-product">
+                                    <div class="product-f-image">
+                                        <img src="./img/Products/<?php echo $row["ProductImage"]?>" alt="">
+                                        <div class="product-hover">
+                                            <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
+                                            <a href="single-product.php?ProductId=<?php echo $row["ProductId"]?>" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                                        </div>
                                     </div>
+                                    
+                                    <h2><a href="single-product.html"><?php echo $row["ProductName"]?></a></h2>
+                                    
+                                    <div class="product-carousel-price">
+                                        <ins>$<?php echo $row["ProductPrice"]?></ins>
+                                    </div> 
                                 </div>
-                                
-                                <h2><a href="single-product.html">Samsung Galaxy s5- 2015</a></h2>
-                                
-                                <div class="product-carousel-price">
-                                    <ins>$700.00</ins> <del>$100.00</del>
-                                </div> 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-2.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>Nokia Lumia 1320</h2>
-                                <div class="product-carousel-price">
-                                    <ins>$899.00</ins> <del>$999.00</del>
-                                </div> 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-3.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>LG Leon 2015</h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$400.00</ins> <del>$425.00</del>
-                                </div>                                 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-4.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2><a href="single-product.html">Sony microsoft</a></h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$200.00</ins> <del>$225.00</del>
-                                </div>                            
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-5.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>iPhone 6</h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$1200.00</ins> <del>$1355.00</del>
-                                </div>                                 
-                            </div>
+                            <?php }?>
                         </div>
                         <h2 class="section-title">Best Selling Products</h2>
                         <div class="product-carousel">
+                        <?php
+                                for ($x = 0; $x < 5; $x++)
+                                {
+                                $row = mysqli_fetch_array($result)
+                            ?>
                             <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-1.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                                    <div class="product-f-image">
+                                        <img src="./img/Products/<?php echo $row["ProductImage"]?>" alt="">
+                                        <div class="product-hover">
+                                            <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
+                                            <a href="single-product.php?ProductId=<?php echo $row["ProductId"]?>" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                                        </div>
                                     </div>
+                                    
+                                    <h2><a href="single-product.html"><?php echo $row["ProductName"]?></a></h2>
+                                    
+                                    <div class="product-carousel-price">
+                                        <ins>$<?php echo $row["ProductPrice"]?></ins>
+                                    </div> 
                                 </div>
-                                
-                                <h2><a href="single-product.html">Samsung Galaxy s5- 2015</a></h2>
-                                
-                                <div class="product-carousel-price">
-                                    <ins>$700.00</ins> <del>$100.00</del>
-                                </div> 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-2.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>Nokia Lumia 1320</h2>
-                                <div class="product-carousel-price">
-                                    <ins>$899.00</ins> <del>$999.00</del>
-                                </div> 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-3.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>LG Leon 2015</h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$400.00</ins> <del>$425.00</del>
-                                </div>                                 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-4.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2><a href="single-product.html">Sony microsoft</a></h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$200.00</ins> <del>$225.00</del>
-                                </div>                            
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-5.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>iPhone 6</h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$1200.00</ins> <del>$1355.00</del>
-                                </div>                                 
-                            </div>
+                                <?php }?>
                         </div>
                         <div class="product-carousel">
+                        <?php
+                                for ($x = 0; $x < 5; $x++)
+                                {
+                                $row = mysqli_fetch_array($result)
+                            ?>
                             <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-1.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                                    <div class="product-f-image">
+                                        <img src="./img/Products/<?php echo $row["ProductImage"]?>" alt="">
+                                        <div class="product-hover">
+                                            <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
+                                            <a href="single-product.php?ProductId=<?php echo $row["ProductId"]?>" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                                        </div>
                                     </div>
+                                    
+                                    <h2><a href="single-product.html"><?php echo $row["ProductName"]?></a></h2>
+                                    
+                                    <div class="product-carousel-price">
+                                        <ins>$<?php echo $row["ProductPrice"]?></ins>
+                                    </div> 
                                 </div>
-                                
-                                <h2><a href="single-product.html">Samsung Galaxy s5- 2015</a></h2>
-                                
-                                <div class="product-carousel-price">
-                                    <ins>$700.00</ins> <del>$100.00</del>
-                                </div> 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-2.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>Nokia Lumia 1320</h2>
-                                <div class="product-carousel-price">
-                                    <ins>$899.00</ins> <del>$999.00</del>
-                                </div> 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-3.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>LG Leon 2015</h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$400.00</ins> <del>$425.00</del>
-                                </div>                                 
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-4.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2><a href="single-product.html">Sony microsoft</a></h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$200.00</ins> <del>$225.00</del>
-                                </div>                            
-                            </div>
-                            <div class="single-product">
-                                <div class="product-f-image">
-                                    <img src="img/product-5.jpg" alt="">
-                                    <div class="product-hover">
-                                        <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                        <a href="single-product.html" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                    </div>
-                                </div>
-                                
-                                <h2>iPhone 6</h2>
-
-                                <div class="product-carousel-price">
-                                    <ins>$1200.00</ins> <del>$1355.00</del>
-                                </div>                                 
-                            </div>
+                                <?php }?>
                         </div>
                     </div>
                 </div>
@@ -509,14 +345,14 @@
                 <div class="col-md-12">
                     <div class="brand-wrapper">
                         <div class="brand-list">
-                            <img src="img/brand1.png" alt="">
-                            <img src="img/brand2.png" alt="">
-                            <img src="img/brand3.png" alt="">
-                            <img src="img/brand4.png" alt="">
-                            <img src="img/brand5.png" alt="">
-                            <img src="img/brand6.png" alt="">
-                            <img src="img/brand1.png" alt="">
-                            <img src="img/brand2.png" alt="">                            
+                            <?php
+                                $sql = "SELECT * FROM Producers";
+                                $result = $connect->query($sql);
+                                while ($row = mysqli_fetch_array($result))
+                                {
+                            ?>
+                                <img src="./img/Producers/<?php echo $row["ProducerImage"]?>" alt="" style="height: 100px; wight: 100px">
+                            <?php }?>
                         </div>
                     </div>
                 </div>
@@ -524,7 +360,7 @@
         </div>
     </div> <!-- End brands area -->
     
-    <div class="product-widget-area">
+    <!-- <div class="product-widget-area">
         <div class="zigzag-bottom"></div>
         <div class="container">
             <div class="row">
@@ -674,7 +510,7 @@
                 </div>
             </div>
         </div>
-    </div> <!-- End product widget area -->
+    </div> End product widget area -->
     
     <div class="footer-top-area">
         <div class="zigzag-bottom"></div>

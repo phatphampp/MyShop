@@ -229,12 +229,6 @@
                                     <div class="product-main-img">
                                         <img src="img/Products/<?php  echo $row["ProductImage"]?>" alt="">
                                     </div>
-                                    
-                                    <div class="product-gallery">
-                                        <img src="img/product-thumb-1.jpg" alt="">
-                                        <img src="img/product-thumb-2.jpg" alt="">
-                                        <img src="img/product-thumb-3.jpg" alt="">
-                                    </div>
                                 </div>
                             </div>
                             
