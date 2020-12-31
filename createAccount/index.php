@@ -49,6 +49,13 @@
 		$CustomerTel = "";
 		$CustomerUsername = "";
 		$CustomerPassword = "";
+		//Sinh ra chuỗi dài 32 ngẫu nhiên, cũng cần lưu chuỗi này vào một cột trong DB
+		$salt = random_bytes(32);
+
+		//Sử dụng thêm một salt cố định
+		$staticSalt = 'G4334#';
+
+		$crypt = md5($staticSalt.$CustomerPassword.$salt);
 
 		//Lấy giá trị POST từ form vừa submit
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -56,7 +63,7 @@
 			if(isset($_POST["address"])) { $CustomerAddress = $_POST['address']; }
 			if(isset($_POST["telephone"])) { $CustomerTel = $_POST['telephone']; }
 			if(isset($_POST["username"])) { $CustomerUsername = $_POST['username']; }
-			if(isset($_POST["password"])) { $CustomerPassword = $_POST['password']; }
+			if(isset($_POST["password"])) { $CustomerPassword = $crypt; }
 
 			//Code xử lý, insert dữ liệu vào table
 			$sql = "INSERT INTO customers (CustomerFullName, CustomerAddress, CustomerTel, CustomerUsername, CustomerPassword)
@@ -67,6 +74,8 @@
 			} else {
 				echo "Error: " . $sql . "<br>" . $connect->error;
 			}
+
+			
 		}
 		//Đóng database
 		$connect->close();
@@ -105,7 +114,7 @@
 					</div>
 
 					<div class="wrap-input100 rs1 validate-input" data-validate="Password is required">
-						<input class="input100" type="password" name="pass" placeholder="Password">
+						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</div>
