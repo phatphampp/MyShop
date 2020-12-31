@@ -150,13 +150,13 @@ z-index: 999;}
 .mainmenu-area ul.navbar-nav li:hover a, .mainmenu-area ul.navbar-nav li.active a {background: #5a88ca; color:#FFF;}
 .mainmenu-area .nav > li > a:focus {color: #FFF;}
 
-.slider-area { width:80%; position:relative; margin:0 auto; padding:5px;}
+.slider-area { width:100%; position:relative; margin:0 auto; padding:5px;}
 /*-------------------------
 [9. Block slider]
 ---------------------------*/
 .block-slider{
 	border:none;
-	width: 80%;
+	width: 100%;
 }
 .block-slider ul li{
 	list-style: none;

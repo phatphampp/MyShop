@@ -28,7 +28,21 @@
 <!--===============================================================================================-->
 </head>
 <body>
-	
+<?php
+    $username = "root"; // Khai báo username
+    $password = "";      // Khai báo password
+    $server   = "localhost";   // Khai báo server
+    $dbname   = "vehicles_store";      // Khai báo database
+
+    // Kết nối database tintuc
+    $connect = new mysqli($server, $username, $password, $dbname);
+
+    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+    if ($connect->connect_error) {
+        die("Không kết nối :" . $conn->connect_error);
+        exit();
+    }
+  ?>
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
@@ -37,14 +51,14 @@
 						Account Login
 					</span>
 
-					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="email" placeholder="Email">
+					<div class="wrap-input100 rs1 validate-input">
+						<input class="input100" type="text" name="username" placeholder="Username">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</div>
 
 					<div class="wrap-input100 rs1 validate-input" data-validate="Password is required">
-						<input class="input100" type="password" name="pass" placeholder="Password">
+						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</div>
@@ -78,7 +92,32 @@
 			</div>
 		</div>
 	</div>
-	
+	<?php
+		if($_SERVER["REQUEST_METHOD"] == "POST") {
+			// username and password sent from form 
+			
+			$myusername = mysqli_real_escape_string($db,$_POST['username']);
+			$mypassword = mysqli_real_escape_string($db,$_POST['password']); 
+			
+			$sql = "SELECT id FROM customers WHERE CustomerUsername = '$myusername' and CustomerPassword = '$mypassword'";
+			$result = mysqli_query($db,$sql);
+			$row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+			$active = $row['active'];
+			
+			$count = mysqli_num_rows($result);
+			
+			// If result matched $myusername and $mypassword, table row must be 1 row
+				
+			if($count == 1) {
+				session_register("myusername");
+				$_SESSION['login_user'] = $myusername;
+				
+				header("location: welcome.php");
+			}else {
+				$error = "Your Login Name or Password is invalid";
+			}
+		}
+   ?>
 
 	
 <!--===============================================================================================-->
