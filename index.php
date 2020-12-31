@@ -60,8 +60,8 @@
                             <li><a href="#"><i class="fa fa-heart"></i> Wishlist</a></li>
                             <li><a href="cart.html"><i class="fa fa-user"></i> My Cart</a></li>
                             <li><a href="checkout.html"><i class="fa fa-user"></i> Checkout</a></li>
-                            <li><a href="./Login_v19/index.html"><i class="fa fa-user"></i> Login</a></li>
-                            <li><a href="./Login_v19/index.html"><i class="fa fa-user"></i> Create Account</a></li>
+                            <li><a href="./login/index.html"><i class="fa fa-user"></i> Login</a></li>
+                            <li><a href="./createAccount/index.php"><i class="fa fa-user"></i> Create Account</a></li>
                         </ul>
                     </div>
                 </div>
