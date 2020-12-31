@@ -6,3 +6,27 @@ BEGIN
 END $
 DELIMITER ; 
 
+DELIMITER $	
+CREATE PROCEDURE GetTopTenLatestProduct()
+BEGIN
+	select *
+    from products
+    order by ProductId DESC
+    limit 10;
+END $
+DELIMITER ; 
+/*	call GetTopTenLatestProduct();	*/
+
+
+DELIMITER $	
+CREATE PROCEDURE GetTopTenBestSellersProduct()
+BEGIN
+	select p.*
+    from Products as p, (select ProductId, SUM(Quantity) as TotalSold
+					from OrderDetails 
+					group by ProductId
+					Order By TotalSold desc
+					Limit 10) as temp
+	where p.ProductId = temp.ProductId;
+END $
+DELIMITER ; 
