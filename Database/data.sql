@@ -11,11 +11,6 @@ insert into categories(categoryname, categorydescription, categoryimage) values 
 insert into categories(categoryname, categorydescription, categoryimage) values ('For Woman', '', '');
 insert into categories(categoryname, categorydescription, categoryimage) values ('For Kids', '', '');
 
-insert into OrderState(Description) values ('New');
-insert into OrderState(Description) values ('Shipping');
-insert into OrderState(Description) values ('Completed');
-insert into OrderState(Description) values ('Canceled');
-
 /* INSERT QUERY NO: 1 */
 INSERT INTO Products(ProductName, ProductPrice, ProductQuantity, ProductDescription, ProductImage, CategoryId, OriginID, ProducerId)
 VALUES
