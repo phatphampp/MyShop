@@ -222,7 +222,7 @@
                         <h2 class="section-title">Latest Products</h2>
                         <div class="product-carousel">
                         <?php
-                            $sql = "SELECT * FROM Products";
+                            $sql = "call GetTopTenLatestProduct();";
                             $result = $connect->query($sql);
                                  
                             for ($x = 0; $x < 5; $x++)
@@ -275,6 +275,8 @@
                         <h2 class="section-title">Best Selling Products</h2>
                         <div class="product-carousel">
                         <?php
+                                $sql = "call GetTopTenBestSellersProduct();";
+                                $result = $connect->query($sql);
                                 for ($x = 0; $x < 5; $x++)
                                 {
                                 $row = mysqli_fetch_array($result)
