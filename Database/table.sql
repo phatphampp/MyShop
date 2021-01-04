@@ -47,13 +47,13 @@ create table Customers (
 );
 
 create table Employees (
-	EmployeesId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	EmployeesFullName NVARCHAR(200) NOT NULL,
-	EmployeesAddress NVARCHAR(1000) NOT NULL,
-	EmployeesTel NVARCHAR(200),
-    EmployeesUsername NVARCHAR(200),
-    EmployeesPassword NVARCHAR(200),
-    UNIQUE (EmployeesUsername)
+	EmployeeId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	EmployeeFullName NVARCHAR(200) NOT NULL,
+	EmployeeAddress NVARCHAR(1000) NOT NULL,
+	EmployeeTel NVARCHAR(200),
+    EmployeeUsername NVARCHAR(200),
+    EmployeePassword NVARCHAR(200),
+    UNIQUE (EmployeeUsername)
 );
 create table OrderState (
 	StateId int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
