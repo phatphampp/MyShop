@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,14 +42,40 @@
 
     //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
     if ($connect->connect_error) {
-        die("Không kết nối :" . $conn->connect_error);
+        die("Không kết nối :" . $connect->connect_error);
         exit();
-    }
+	}
+	if($_SERVER["REQUEST_METHOD"] == "POST") {
+		// username and password sent from form 
+		
+		$myusername = $_POST['username'];
+		$mypassword = $_POST['password']; 
+
+		$mypassword = md5($mypassword);
+		
+		$sql = "SELECT * FROM customers WHERE CustomerUsername = '$myusername' and CustomerPassword = '$mypassword'";
+		$result = $connect->query($sql);
+		
+		$count = mysqli_num_rows($result);
+		
+		// If result matched $myusername and $mypassword, table row must be 1 row
+			
+		if($count == 1) {
+			$_SESSION['login_user'] = $myusername;
+			
+			header("Location: index.php");
+		}else {
+			$error = "Your Login Name or Password is invalid";
+			echo $error;
+		}
+	}
+	//Đóng database
+	$connect->close();
   ?>
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
-				<form class="login100-form validate-form">
+				<form class="login100-form validate-form" action="" method="post">
 					<span class="login100-form-title p-b-33">
 						Account Login
 					</span>
@@ -64,7 +93,7 @@
 					</div>
 
 					<div class="container-login100-form-btn m-t-20">
-						<button class="login100-form-btn">
+						<button class="login100-form-btn" type="submit">
 							Sign in
 						</button>
 					</div>
@@ -92,34 +121,7 @@
 			</div>
 		</div>
 	</div>
-	<?php
-		if($_SERVER["REQUEST_METHOD"] == "POST") {
-			// username and password sent from form 
-			
-			$myusername = mysqli_real_escape_string($db,$_POST['username']);
-			$mypassword = mysqli_real_escape_string($db,$_POST['password']); 
-			
-			$sql = "SELECT id FROM customers WHERE CustomerUsername = '$myusername' and CustomerPassword = '$mypassword'";
-			$result = mysqli_query($db,$sql);
-			$row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-			$active = $row['active'];
-			
-			$count = mysqli_num_rows($result);
-			
-			// If result matched $myusername and $mypassword, table row must be 1 row
-				
-			if($count == 1) {
-				session_register("myusername");
-				$_SESSION['login_user'] = $myusername;
-				
-				header("location: welcome.php");
-			}else {
-				$error = "Your Login Name or Password is invalid";
-			}
-		}
-   ?>
 
-	
 <!--===============================================================================================-->
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->

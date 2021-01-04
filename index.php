@@ -46,7 +46,7 @@
 
     //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
     if ($connect->connect_error) {
-        die("Không kết nối :" . $conn->connect_error);
+        die("Không kết nối :" . $connect->connect_error);
         exit();
     }
   ?>            
@@ -59,8 +59,8 @@
                             <li><a href="#"><i class="fa fa-user"></i> My Account</a></li>
                             <li><a href="#"><i class="fa fa-heart"></i> Wishlist</a></li>
                             <li><a href="cart.html"><i class="fa fa-user"></i> My Cart</a></li>
-                            <li><a href="checkout.html"><i class="fa fa-user"></i> Checkout</a></li>
-                            <li><a href="./login/index.html"><i class="fa fa-user"></i> Login</a></li>
+                            <li><a href="test.php"><i class="fa fa-user"></i> Checkout</a></li>
+                            <li><a href="./login/index.php"><i class="fa fa-user"></i> Login</a></li>
                             <li><a href="./createAccount/index.php"><i class="fa fa-user"></i> Create Account</a></li>                            
                             <li><a href="./dashboard/dashboard.html"><i class="fa fa-user"></i> Dashboard</a></li>
 

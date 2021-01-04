@@ -49,13 +49,6 @@
 		$CustomerTel = "";
 		$CustomerUsername = "";
 		$CustomerPassword = "";
-		//Sinh ra chuỗi dài 32 ngẫu nhiên, cũng cần lưu chuỗi này vào một cột trong DB
-		$salt = random_bytes(32);
-
-		//Sử dụng thêm một salt cố định
-		$staticSalt = 'G4334#';
-
-		$crypt = md5($staticSalt.$CustomerPassword.$salt);
 
 		//Lấy giá trị POST từ form vừa submit
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -63,7 +56,9 @@
 			if(isset($_POST["address"])) { $CustomerAddress = $_POST['address']; }
 			if(isset($_POST["telephone"])) { $CustomerTel = $_POST['telephone']; }
 			if(isset($_POST["username"])) { $CustomerUsername = $_POST['username']; }
-			if(isset($_POST["password"])) { $CustomerPassword = $crypt; }
+			if(isset($_POST["password"])) { $CustomerPassword = $_POST['password']; }
+			
+			$CustomerPassword = md5($CustomerPassword);
 
 			//Code xử lý, insert dữ liệu vào table
 			$sql = "INSERT INTO customers (CustomerFullName, CustomerAddress, CustomerTel, CustomerUsername, CustomerPassword)

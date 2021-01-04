@@ -27,29 +27,10 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    
   </head>
   <body>
-    <?php
-    $username = "root"; // Khai báo username
-    $password = "";      // Khai báo password
-    $server   = "localhost";   // Khai báo server
-    $dbname   = "vehicles_store";      // Khai báo database
-
-    // Kết nối database tintuc
-    $connect = new mysqli($server, $username, $password, $dbname);
-
-    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
-    if ($connect->connect_error) {
-        die("Không kết nối :" . $conn->connect_error);
-        exit();
-    }
-  ?>
+    
     <div class="header-area">
         <div class="container">
             <div class="row">
@@ -95,13 +76,20 @@
     <div class="site-branding-area">
         <div class="container">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <div class="logo">
                         <h1><a href="./"><img src="img/logo.png"></a></h1>
                     </div>
                 </div>
-                
                 <div class="col-sm-6">
+                    <div>
+                        <form action="search.php" method="get">
+                            Search: <input type="text" name="search" />
+                            <input type="submit" name="ok" value="search" />
+                        </form>
+                    </div>
+                </div>
+                <div class="col-sm-3">
                     <div class="shopping-item">
                         <a href="cart.html">Cart - <span class="cart-amunt">$100</span> <i class="fa fa-shopping-cart"></i> <span class="product-count">5</span></a>
                     </div>
@@ -153,11 +141,53 @@
     <div class="single-product-area">
         <div class="zigzag-bottom"></div>
         <div class="container">
+            <?php 
+                // PHẦN XỬ LÝ PHP
+                // BƯỚC 1: KẾT NỐI CSDL
+                $username = "root"; // Khai báo username
+                $password = "";      // Khai báo password
+                $server   = "localhost";   // Khai báo server
+                $dbname   = "vehicles_store";      // Khai báo database
+
+                // Kết nối database tintuc
+                $connect = new mysqli($server, $username, $password, $dbname);
+
+                //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+                if ($connect->connect_error) {
+                    die("Không kết nối :" . $connect->connect_error);
+                    exit();
+                }
+        
+                // BƯỚC 2: TÌM TỔNG SỐ RECORDS
+                $result = mysqli_query($connect, 'select count(ProductId) as total from products');
+                $row = mysqli_fetch_assoc($result);
+                $total_records = $row['total'];
+        
+                // BƯỚC 3: TÌM LIMIT VÀ CURRENT_PAGE
+                $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+                $limit = 10;
+        
+                // BƯỚC 4: TÍNH TOÁN TOTAL_PAGE VÀ START
+                // tổng số trang
+                $total_page = ceil($total_records / $limit);
+        
+                // Giới hạn current_page trong khoảng 1 đến total_page
+                if ($current_page > $total_page){
+                    $current_page = $total_page;
+                }
+                else if ($current_page < 1){
+                    $current_page = 1;
+                }
+        
+                // Tìm Start
+                $start = ($current_page - 1) * $limit;
+        
+                // BƯỚC 5: TRUY VẤN LẤY DANH SÁCH TIN TỨC
+                // Có limit và start rồi thì truy vấn CSDL lấy danh sách tin tức
+                $result = mysqli_query($connect, "SELECT * FROM products LIMIT $start, $limit");
+            ?>
             <div class="row">
-            <?php
-                $sql = "SELECT * FROM Products";
-                $result = $connect->query($sql);
-                     
+            <?php    
                 while ($row = mysqli_fetch_array($result))
                 {
             ?>
@@ -178,7 +208,36 @@
                 </div>
                 <?php }?>
             </div>
-            
+        <div class="pagination">
+           <?php 
+            // PHẦN HIỂN THỊ PHÂN TRANG
+            // BƯỚC 7: HIỂN THỊ PHÂN TRANG
+ 
+            // nếu current_page > 1 và total_page > 1 mới hiển thị nút prev
+            if ($current_page > 1 && $total_page > 1){
+                echo '<a href="shop.php?page='.($current_page-1).'">Prev</a> | ';
+            }
+ 
+            // Lặp khoảng giữa
+            for ($i = 1; $i <= $total_page; $i++){
+                // Nếu là trang hiện tại thì hiển thị thẻ span
+                // ngược lại hiển thị thẻ a
+                if ($i == $current_page){
+                    echo '<span>'.$i.'</span> | ';
+                }
+                else{
+                    echo '<a href="shop.php?page='.$i.'">'.$i.'</a> | ';
+                }
+            }
+ 
+            // nếu current_page < $total_page và total_page > 1 mới hiển thị nút prev
+            if ($current_page < $total_page && $total_page > 1){
+                echo '<a href="shop.php?page='.($current_page+1).'">Next</a> | ';
+            }
+           ?>
+        </div>
+           
+        <!-- </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="product-pagination text-center">
@@ -204,7 +263,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="footer-top-area">
