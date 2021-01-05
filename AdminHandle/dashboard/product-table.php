@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 
@@ -5,7 +8,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Tell the browser to be responsive to screen width -->
-   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords"
         content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 4 admin, bootstrap 4, css3 dashboard, bootstrap 4 dashboard, Ample lite admin bootstrap 4 dashboard, frontend, responsive bootstrap 4 admin template, Ample admin lite dashboard bootstrap 4 dashboard template">
     <meta name="description"
@@ -26,6 +29,57 @@
 </head>
 
 <body>
+    <?php
+        $username = "root"; // Khai báo username
+        $password = "123456";      // Khai báo password
+        $server   = "localhost";   // Khai báo server
+        $dbname   = "vehicles_store";      // Khai báo database
+
+        // Kết nối database tintuc
+        $connect = new mysqli($server, $username, $password, $dbname);
+        
+        //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+        if ($connect->connect_error) {
+            die("Không kết nối :" . $connect->connect_error);
+            exit();
+        }
+
+        $curr_user = $_SESSION['login_user'];
+
+                
+        $sql = "call GetEmployeeDetailByUsername('$curr_user');";
+        $result = $connect->query($sql);            
+        $row = mysqli_fetch_array($result);
+        $result->close();
+
+        
+	    //Đóng database
+	    $connect->close();
+    ?>
+    <?php
+        
+        // Kết nối database tintuc
+        $connect = new mysqli($server, $username, $password, $dbname);
+        
+        //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+        if ($connect->connect_error) {
+            die("Không kết nối :" . $connect->connect_error);
+            exit();
+        }
+        
+        if (isset($_GET['search'])){
+            $tmp = $_GET["search"];
+            $keyword = "%$tmp%";
+        } else {
+            $keyword = "%%";
+        }
+        $sql = "call GetProductByKeyWord('$keyword');";
+        $result = $connect->query($sql); 
+        $products = $result->fetch_all(MYSQLI_BOTH);
+        $result->close();
+	    //Đóng database
+	    $connect->close();
+    ?>
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -85,14 +139,10 @@
                     <!-- Right side toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav ml-auto d-flex align-items-center">
-
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
                         <li class=" in">
-                            <form role="search" class="app-search d-none d-md-block mr-3">
-                                <input type="text" placeholder="Search..." class="form-control mt-0">
-                                <a href="" class="active">
+                            <form role="search" id="search_form" method="get" class="app-search d-none d-md-block mr-3">
+                                <input type="text" name="search" placeholder="Search..." class="form-control mt-0">
+                                <a href="#" class="active" onclick="document.getElementById('search_form').submit();">
                                     <i class="fa fa-search"></i>
                                 </a>
                             </form>
@@ -101,9 +151,7 @@
                         <!-- User profile and search -->
                         <!-- ============================================================== -->
                         <li>
-                            <a class="profile-pic" href="#">
-                                <img src="plugins/images/users/varun.jpg" alt="user-img" width="36"
-                                    class="img-circle"><span class="text-white font-medium">Steave</span></a>
+                            <a class="profile-pic" href="#"><span class="text-white font-medium"><?php  echo $row["EmployeeUsername"]?></span></a>
                         </li>
                         <!-- ============================================================== -->
                         <!-- User profile and search -->
@@ -125,33 +173,25 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <!-- User Profile-->
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="index.html" aria-expanded="false"><i class="fas fa-clock fa-fw"
-                                    aria-hidden="true"></i><span class="hide-menu">Dashboard</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="profile.html" aria-expanded="false">
+                        <li class="sidebar-item selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                href="profile.php" aria-expanded="false">
                                 <i class="fa fa-user" aria-hidden="true"></i><span class="hide-menu">Profile</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="basic-table.html" aria-expanded="false"><i class="fa fa-table"
-                                    aria-hidden="true"></i><span class="hide-menu">Table</span></a></li>
+                                href="product-table.php" aria-expanded="false"><i class="fa fa-table"
+                                    aria-hidden="true"></i><span class="hide-menu">Products</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="fontawesome.html" aria-expanded="false"><i class="fa fa-font"
-                                    aria-hidden="true"></i><span class="hide-menu">Icon</span></a></li>
+                                href="category-table.php" aria-expanded="false"><i class="fa fa-table"
+                                    aria-hidden="true"></i><span class="hide-menu">Categories</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="map-google.html" aria-expanded="false"><i class="fa fa-globe"
-                                    aria-hidden="true"></i><span class="hide-menu">Google Map</span></a></li>
+                                href="producer-table.php" aria-expanded="false"><i class="fa fa-table"
+                                    aria-hidden="true"></i><span class="hide-menu">Producers</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="blank.html" aria-expanded="false"><i class="fa fa-columns"
-                                    aria-hidden="true"></i><span class="hide-menu">Blank</span></a></li>
+                                href="customer-table.php" aria-expanded="false"><i class="fa fa-font"
+                                    aria-hidden="true"></i><span class="hide-menu">Customer</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="404.html" aria-expanded="false"><i class="fa fa-info-circle"
-                                    aria-hidden="true"></i><span class="hide-menu">404</span></a></li>
-                        <li class="text-center p-20 upgrade-btn">
-                            <a href="https://wrappixel.com/templates/ampleadmin/"
-                                class="btn btn-block btn-danger text-white" target="_blank">Upgrade to
-                                Pro</a>
-                        </li>
+                                href="orders-table.php" aria-expanded="false"><i class="fa fa-globe"
+                                    aria-hidden="true"></i><span class="hide-menu">Orders</span></a></li>
                     </ul>
 
                 </nav>
@@ -172,17 +212,7 @@
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title text-uppercase font-medium font-14">Profile page</h4>
-                    </div>
-                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-                        <div class="d-md-flex">
-                            <ol class="breadcrumb ml-auto">
-                                <li><a href="#">Dashboard</a></li>
-                            </ol>
-                            <a href="https://wrappixel.com/templates/ampleadmin/" target="_blank"
-                                class="btn btn-danger  d-none d-md-block pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light">Upgrade
-                                to Pro</a>
-                        </div>
+                        <h4 class="page-title text-uppercase font-medium font-14">Product page</h4>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -197,97 +227,47 @@
                 <!-- ============================================================== -->
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
-                <!-- Row -->
                 <div class="row">
-                    <!-- Column -->
-                    <div class="col-lg-4 col-xlg-3 col-md-12">
+                    <div class="col-sm-12">
                         <div class="white-box">
-                            <div class="user-bg"> <img width="100%" alt="user" src="plugins/images/large/img1.jpg">
-                                <div class="overlay-box">
-                                    <div class="user-content">
-                                        <a href="javascript:void(0)"><img src="plugins/images/users/genu.jpg"
-                                                class="thumb-lg img-circle" alt="img"></a>
-                                        <h4 class="text-white mt-2">User Name</h4>
-                                        <h5 class="text-white mt-2">info@myadmin.com</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-btm-box mt-5 d-md-flex">
-                                <div class="col-md-4 col-sm-4 text-center">
-                                    <h1>258</h1>
-                                </div>
-                                <div class="col-md-4 col-sm-4 text-center">
-                                    <h1>125</h1>
-                                </div>
-                                <div class="col-md-4 col-sm-4 text-center">
-                                    <h1>556</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Column -->
-                    <!-- Column -->
-                    <div class="col-lg-8 col-xlg-9 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form class="form-horizontal form-material">
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Full Name</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input type="text" placeholder="Johnathan Doe"
-                                                class="form-control p-0 border-0"> </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label for="example-email" class="col-md-12 p-0">Email</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input type="email" placeholder="johnathan@admin.com"
-                                                class="form-control p-0 border-0" name="example-email"
-                                                id="example-email">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Password</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input type="password" value="password" class="form-control p-0 border-0">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Phone No</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input type="text" placeholder="123 456 7890"
-                                                class="form-control p-0 border-0">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Message</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <textarea rows="5" class="form-control p-0 border-0"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-sm-12">Select Country</label>
-                                        <div class="col-sm-12 border-bottom">
-                                            <select class="form-control p-0 border-0">
-                                                <option>London</option>
-                                                <option>India</option>
-                                                <option>Usa</option>
-                                                <option>Canada</option>
-                                                <option>Thailand</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-success">Update Profile</button>
-                                        </div>
-                                    </div>
-                                </form>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-top-0">#</th>
+                                            <th class="border-top-0">Name</th>
+                                            <th class="border-top-0">Quantity</th>
+                                            <th class="border-top-0">Price</th>
+                                            <th class="border-top-0">View</th>
+                                            <th class="border-top-0">Category</th>
+                                            <th class="border-top-0">Origin</th>
+                                            <th class="border-top-0">Producer</th>
+                                            <th class="border-top-0"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                            foreach($products as $prod)
+                                            {
+                                                echo "<tr>";
+                                                    echo "<td>".$prod["ProductId"]."</td>";
+                                                    echo "<td>".$prod["ProductName"]."</td>";
+                                                    echo "<td>".$prod["ProductQuantity"]."</td>";
+                                                    echo "<td>".$prod["ProductPrice"]."</td>";
+                                                    echo "<td>".$prod["ProductView"]."</td>";                                                    
+                                                    echo "<td>".$prod["CategoryName"]."</td>";
+                                                    echo "<td>".$prod["OriginName"]."</td>";
+                                                    echo "<td>".$prod["ProducerName"]."</td>"; ?>
+                                                    <td><a href="productdetail-table.php?ProductId=<?php echo $prod["ProductId"] ?>">Edit</a></td> <?php
+                                                echo "</tr>";
+                                            }
+                                        ?>                                        
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <!-- Column -->
                 </div>
-                <!-- Row -->
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
                 <!-- ============================================================== -->
