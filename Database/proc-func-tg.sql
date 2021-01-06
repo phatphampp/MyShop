@@ -30,3 +30,19 @@ BEGIN
 	where p.ProductId = temp.ProductId;
 END $
 DELIMITER ; 
+
+DELIMITER $	
+CREATE PROCEDURE GetEmployeeDetailByUsername(in username nvarchar(200))
+BEGIN
+	select * from employees
+    where EmployeeUsername = username;
+END $
+DELIMITER ;
+
+DELIMITER $	
+CREATE PROCEDURE GetProductByKeyWord(in KeyWord nvarchar(200))
+BEGIN
+	select * from products as p, categories as c, origins as o, producers as pc
+    where p.CategoryId = c.CategoryId and p.OriginId = o.OriginId and p.ProducerId = pc.ProducerID and p.ProductName like KeyWord;
+END $
+DELIMITER ; 

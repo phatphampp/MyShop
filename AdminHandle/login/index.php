@@ -33,7 +33,7 @@ session_start();
 <body>
 <?php
     $username = "root"; // Khai báo username
-    $password = "";      // Khai báo password
+    $password = "123456";      // Khai báo password
     $server   = "localhost";   // Khai báo server
     $dbname   = "vehicles_store";      // Khai báo database
 
@@ -63,7 +63,7 @@ session_start();
 		if($count == 1) {
 			$_SESSION['login_user'] = $myusername;
 			
-			header("Location: ../dashboard/index.php");
+			header("Location: ../dashboard/profile.php");
 		}else {
 			$error = "Your Login Name or Password is invalid";
 			echo $error;
