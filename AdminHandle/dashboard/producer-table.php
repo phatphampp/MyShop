@@ -29,6 +29,7 @@ session_start();
 </head>
 
 <body>
+    <!--Lấy thông tin người dùng-->
     <?php
         $username = "root"; // Khai báo username
         $password = "";      // Khai báo password
@@ -73,9 +74,9 @@ session_start();
         } else {
             $keyword = "%%";
         }
-        $sql = "call GetProductByKeyWord('$keyword');";
+        $sql = "call GetProducerByKeyWord('$keyword');";
         $result = $connect->query($sql); 
-        $products = $result->fetch_all(MYSQLI_BOTH);
+        $producers = $result->fetch_all(MYSQLI_BOTH);
         $result->close();
 	    //Đóng database
 	    $connect->close();
@@ -177,13 +178,13 @@ session_start();
                                 href="profile.php" aria-expanded="false">
                                 <i class="fa fa-user" aria-hidden="true"></i><span class="hide-menu">Profile</span></a>
                         </li>
-                        <li class="sidebar-item selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="product-table.php" aria-expanded="false"><i class="fa fa-table"
                                     aria-hidden="true"></i><span class="hide-menu">Products</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="category-table.php" aria-expanded="false"><i class="fa fa-table"
                                     aria-hidden="true"></i><span class="hide-menu">Categories</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <li class="sidebar-item selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="producer-table.php" aria-expanded="false"><i class="fa fa-table"
                                     aria-hidden="true"></i><span class="hide-menu">Producers</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
@@ -212,15 +213,15 @@ session_start();
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title text-uppercase font-medium font-14">Product page</h4>
+                        <h4 class="page-title text-uppercase font-medium font-14">Producer page</h4>
                     </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                         <div class="d-md-flex">
                             <ol class="breadcrumb ml-auto">
                                 <li></li>
                             </ol>
-                            <a href="productcreation-table.php"
-                                class="btn btn-danger  d-none d-md-block pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light">New Product</a>
+                            <a href="producercreation-table.php"
+                                class="btn btn-danger  d-none d-md-block pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light">New Producer</a>
                         </div>
                     </div>
                 </div>
@@ -245,29 +246,19 @@ session_start();
                                         <tr>
                                             <th class="border-top-0">#</th>
                                             <th class="border-top-0">Name</th>
-                                            <th class="border-top-0">Quantity</th>
-                                            <th class="border-top-0">Price</th>
-                                            <th class="border-top-0">View</th>
-                                            <th class="border-top-0">Category</th>
-                                            <th class="border-top-0">Origin</th>
-                                            <th class="border-top-0">Producer</th>
+                                            <th class="border-top-0">Description</th>
                                             <th class="border-top-0"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php 
-                                            foreach($products as $prod)
+                                            foreach($producers as $prc)
                                             {
                                                 echo "<tr>";
-                                                    echo "<td>".$prod["ProductId"]."</td>";
-                                                    echo "<td>".$prod["ProductName"]."</td>";
-                                                    echo "<td>".$prod["ProductQuantity"]."</td>";
-                                                    echo "<td>".$prod["ProductPrice"]."</td>";
-                                                    echo "<td>".$prod["ProductView"]."</td>";                                                    
-                                                    echo "<td>".$prod["CategoryName"]."</td>";
-                                                    echo "<td>".$prod["OriginName"]."</td>";
-                                                    echo "<td>".$prod["ProducerName"]."</td>"; ?>
-                                                    <td><a href="productdetail-table.php?ProductId=<?php echo $prod["ProductId"] ?>">Edit</a></td> <?php
+                                                    echo "<td>".$prc["ProducerId"]."</td>";
+                                                    echo "<td>".$prc["ProducerName"]."</td>";
+                                                    echo "<td>".$prc["ProducerDescription"]."</td>"; ?>
+                                                    <td><a href="producerdetail-table.php?ProducerId=<?php echo $prc["ProducerId"] ?>">Edit</a></td> <?php
                                                 echo "</tr>";
                                             }
                                         ?>                                        

@@ -33,7 +33,7 @@ session_start();
 <body>
 <?php
     $username = "root"; // Khai báo username
-    $password = "123456";      // Khai báo password
+    $password = "";      // Khai báo password
     $server   = "localhost";   // Khai báo server
     $dbname   = "vehicles_store";      // Khai báo database
 
@@ -113,7 +113,7 @@ session_start();
 							Create an account?
 						</span>
 
-						<a href="#" class="txt2 hov1">
+						<a href="../createAccount/index.php" class="txt2 hov1">
 							Sign up
 						</a>
 					</div>

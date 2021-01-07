@@ -43,105 +43,31 @@ session_start();
             die("Không kết nối :" . $connect->connect_error);
             exit();
         }
-        $ProductId = $_REQUEST["ProductId"];
+        $OrderId = $_REQUEST["OrderId"];
         if (isset($_POST['update'])){
-            $name = $_POST['prodname'];
-            $quantity = $_POST['prodquantity'];
-            $price = $_POST['prodprice'];
-            $discription = $_POST['proddiscription'];
-            $category = $_POST['prodcategory'];
-            $origin = $_POST['prodorigin'];
-            $producer = $_POST['prodproducer'];
+            $ods = $_POST['odstate'];
 
-            $sql = "UPDATE products
-                    SET ProductName = '$name', ProductQuantity =$quantity, ProductPrice=$price, ProductDescription='$discription',
-                        CategoryId = $category, OriginId = $origin, ProducerId = $producer
-                    where ProductId = $ProductId;";
+            $sql = "UPDATE orders
+                    SET StateId = $ods
+                    where OrderId = $OrderId;";
 
 			if ($connect->query($sql) === TRUE) {
 				echo "Successful";
 			} else {
 				echo "Error: " . $sql . "<br>" . $connect->error;
 			}
-            header("Location: product-table.php");
-        } elseif (isset($_POST['delete'])) {   
-            $id = $_POST['prodid'];                    
-            $sql = "DELETE from products where ProductId = $ProductId;";
-            if ($connect->query($sql) === TRUE) {
-                echo "Successful";
-            } else {
-                echo "Error: " . $sql . "<br>" . $connect->error;
-            }
-
-            header("Location: product-table.php");
+            header("Location: orders-table.php");
         } elseif (isset($_POST['cancel'])) { 
-            header("Location: product-table.php");
-        }
-        
-        //Upload image file
-        if (isset($_POST['confirmfile'])){
-            $target_dir = "../../img/Products/";
-            $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-            $uploadOk = 1;
-            $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-            // Check if image file is a actual image or fake image            
-            $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-            if($check !== false) {
-                echo "File is an image - " . $check["mime"] . ".";
-                $uploadOk = 1;
-            } else {
-                echo "File is not an image.";
-                $uploadOk = 0;
-            }
-            
-
-            // Check if file already exists
-            if (file_exists($target_file)) {
-                echo "Sorry, file already exists.";
-                $uploadOk = 0;
-            }
-
-            // Check file size
-            if ($_FILES["fileToUpload"]["size"] > 500000) {
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-
-            // Allow certain file formats
-            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-            && $imageFileType != "gif" ) {
-                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
-            }
-
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                echo "Sorry, your file was not uploaded.";
-            // if everything is ok, try to upload file
-            } else {
-                if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-                    $img = htmlspecialchars( basename( $_FILES["fileToUpload"]["name"]));
-                    $sql = "UPDATE products
-                            SET ProductImage = '$img'
-                            where ProductId = $ProductId;";
-
-                    if ($connect->query($sql) === TRUE) {
-                        //echo "Successful";
-                    } else {
-                        echo "Error: " . $sql . "<br>" . $connect->error;
-                    }
-                } else {
-                echo "Sorry, there was an error uploading your file.";
-                }
-            }
+            header("Location: orders-table.php");
         }
         
         
         
-        $sql = "call GetProductDetailById($ProductId);";
+        
+        
+        $sql = "call GetOrderById($OrderId);";
         $result = $connect->query($sql);
-        $prodRow = mysqli_fetch_array($result);
+        $odRow = mysqli_fetch_array($result);
         $result->close();
 
 	    //Đóng database
@@ -168,7 +94,25 @@ session_start();
 	    //Đóng database
 	    $connect->close();
     ?>
-    <!-- Lấy thông tin categories-->
+    <!-- Lấy thông tin orderdetails-->
+    <?php        
+        // Kết nối database tintuc
+        $connect = new mysqli($server, $username, $password, $dbname);
+        
+        //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+        if ($connect->connect_error) {
+            die("Không kết nối :" . $connect->connect_error);
+            exit();
+        }
+
+        $sql = "call GetOrderDetailByOrderId($OrderId);";
+        $result = $connect->query($sql);
+        $orderdetails = $result->fetch_all(MYSQLI_BOTH);
+        $result->close();
+	    //Đóng database
+	    $connect->close();
+    ?>
+    <!-- Lấy thông tin OrderState-->
     <?php        
         // Kết nối database tintuc
         $connect = new mysqli($server, $username, $password, $dbname);
@@ -180,51 +124,13 @@ session_start();
         }
         $curr_user = $_SESSION['login_user'];
 
-        $sql = "select * from categories;";
+        $sql = "select * from orderstate;";
         $result = $connect->query($sql);
-        $categories = $result->fetch_all(MYSQLI_BOTH);
+        $oderstate = $result->fetch_all(MYSQLI_BOTH);
         $result->close();
 	    //Đóng database
 	    $connect->close();
-    ?>
-    <!-- Lấy thông tin origins-->
-    <?php        
-        // Kết nối database tintuc
-        $connect = new mysqli($server, $username, $password, $dbname);
-        
-        //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
-        if ($connect->connect_error) {
-            die("Không kết nối :" . $connect->connect_error);
-            exit();
-        }
-        $curr_user = $_SESSION['login_user'];
-
-        $sql = "select * from origins;";
-        $result = $connect->query($sql);
-        $origins = $result->fetch_all(MYSQLI_BOTH);
-        $result->close();
-	    //Đóng database
-	    $connect->close();
-    ?>
-    <!-- Lấy thông tin producers-->
-    <?php        
-        // Kết nối database tintuc
-        $connect = new mysqli($server, $username, $password, $dbname);
-        
-        //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
-        if ($connect->connect_error) {
-            die("Không kết nối :" . $connect->connect_error);
-            exit();
-        }
-        $curr_user = $_SESSION['login_user'];
-
-        $sql = "select * from producers;";
-        $result = $connect->query($sql);
-        $producers = $result->fetch_all(MYSQLI_BOTH);
-        $result->close();
-	    //Đóng database
-	    $connect->close();
-    ?>
+    ?>    
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -314,7 +220,7 @@ session_start();
                                 href="profile.php" aria-expanded="false">
                                 <i class="fa fa-user" aria-hidden="true"></i><span class="hide-menu">Profile</span></a>
                         </li>
-                        <li class="sidebar-item  selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="product-table.php" aria-expanded="false"><i class="fa fa-table"
                                     aria-hidden="true"></i><span class="hide-menu">Products</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
@@ -326,7 +232,7 @@ session_start();
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="customer-table.php" aria-expanded="false"><i class="fa fa-font"
                                     aria-hidden="true"></i><span class="hide-menu">Customer</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <li class="sidebar-item selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="orders-table.php" aria-expanded="false"><i class="fa fa-globe"
                                     aria-hidden="true"></i><span class="hide-menu">Orders</span></a></li>
                     </ul>
@@ -349,7 +255,7 @@ session_start();
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title text-uppercase font-medium font-14">Edit product</h4>
+                        <h4 class="page-title text-uppercase font-medium font-14">Order detail</h4>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -368,110 +274,44 @@ session_start();
                 <div class="row">
                     <!-- Column -->
                     <div class="col-lg-4 col-xlg-3 col-md-12">
-                        <div class="white-box">
-                            <div class="user-bg">
-                                <div class="overlay-box">
-                                    <div class="user-content">
-                                        <img src="../../img/Products/<?php  echo $prodRow["ProductImage"]?>"
-                                                class="thumb-lg img-circle" alt="img">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-btm-box mt-5 d-md-flex text-center">
-                                <form action="" method="post" enctype="multipart/form-data">
-                                    Select image to upload:
-                                    <input type="file" name="fileToUpload" id="fileToUpload">
-                                    <input class="btn btn-success" type="submit" value="Confirm Image" name="confirmfile">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Column -->
-                    <!-- Column -->
-                    <div class="col-lg-8 col-xlg-9 col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <form class="form-horizontal form-material" action="" method="post">
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">ID</label>
+                                        <label class="col-md-12 p-0">Order ID</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input disabled type="text" name="prodid" value ="<?php  echo $prodRow["ProductId"]?>"
+                                            <input disabled type="text" name="odid" value ="<?php  echo $odRow["OrderId"]?>"
                                                 class="form-control p-0 border-0"> </div>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Name</label>
+                                        <label class="col-md-12 p-0">Customer FullName</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input type="text" name="prodname" value ="<?php  echo $prodRow["ProductName"]?>"
+                                            <input disabled type="text" name="cusname" value ="<?php  echo $odRow["CustomerFullName"]?>"
                                                 class="form-control p-0 border-0"> </div>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">View</label>
+                                        <label class="col-md-12 p-0">Order at</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input name="prodview" type="text" disabled value ="<?php  echo $prodRow["ProductView"]?>" class="form-control p-0 border-0">
+                                            <input name="createat" type="text" disabled value ="<?php  echo $odRow["CreateAt"]?>" class="form-control p-0 border-0">
                                         </div>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Quantity</label>
+                                        <label class="col-md-12 p-0">Total Price</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input name="prodquantity" type="text" value ="<?php  echo $prodRow["ProductQuantity"]?>" class="form-control p-0 border-0">
+                                            <input disabled name="odprice" type="text" value ="<?php  echo $odRow["TotalPrice"]?>" class="form-control p-0 border-0">
                                         </div>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Price</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input name="prodprice" type="text" value ="<?php  echo $prodRow["ProductPrice"]?>" class="form-control p-0 border-0">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Description</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input name="proddiscription" type="text" value ="<?php  echo $prodRow["ProductDescription"]?>" class="form-control p-0 border-0">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Categoty</label>
+                                        <label class="col-md-12 p-0">State</label>
                                         <div class="col-md-12 border-bottom">
-                                            <select name="prodcategory" class="form-control p-0 border-0">
-                                                <?php foreach($categories as $cat) 
+                                            <select name="odstate" class="form-control p-0 border-0">
+                                                <?php foreach($oderstate as $os) 
                                                 {
-                                                    if ($prodRow["CategoryId"] == $cat["CategoryId"])
+                                                    if ($odRow["StateId"] == $os["StateId"])
                                                     {
-                                                        echo "<option selected value='".$cat["CategoryId"]."'>".$cat["CategoryName"]."</option>";
+                                                        echo "<option selected value='".$os["StateId"]."'>".$os["StateDescription"]."</option>";
                                                     } else {
-                                                        echo "<option value='".$cat["CategoryId"]."'>".$cat["CategoryName"]."</option>";
-                                                    }                                                    
-                                                }?>                                                    
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Origin</label>
-                                        <div class="col-md-12 border-bottom">
-                                            <select name="prodorigin" class="form-control p-0 border-0">
-                                                <?php foreach($origins as $ori) 
-                                                {
-                                                    if ($prodRow["OriginId"] == $ori["OriginId"])
-                                                    {
-                                                        echo "<option selected value='".$ori["OriginId"]."'>".$ori["OriginName"]."</option>";
-                                                    } else {
-                                                        echo "<option value='".$ori["OriginId"]."'>".$ori["OriginName"]."</option>";
-                                                    }                                                    
-                                                }?>                                                    
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Producer</label>
-                                        <div class="col-md-12 border-bottom">
-                                            <select name="prodproducer" class="form-control p-0 border-0">
-                                                <?php foreach($producers as $prc)
-                                                {
-                                                    if ($prodRow["ProducerId"] == $prc["ProducerId"])
-                                                    {
-                                                        echo "<option selected value='".$prc["ProducerId"]."'>".$prc["ProducerName"]."</option>";
-                                                    } else {
-                                                        echo "<option value='".$prc["ProducerId"]."'>".$prc["ProducerName"]."</option>";
+                                                        echo "<option value='".$os["StateId"]."'>".$os["StateDescription"]."</option>";
                                                     }                                                    
                                                 }?>                                                    
                                             </select>
@@ -482,15 +322,64 @@ session_start();
                                             <input type="submit" name="cancel" class="btn btn-success" value="Cancel"></input>
                                         </div>
                                         <div class="col-sm-6 col-md-12 col-lg-3">
-                                            <input type="submit" name="delete" class="btn btn-success" value="Delete"></input>
-                                        </div>
-                                        <div class="col-sm-6 col-md-12 col-lg-3">
                                             <input type="submit" name="update" class="btn btn-success" value="Update"></input>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
+                    </div>
+                    <!-- Column -->
+                    <!-- Column -->
+                    <div class="col-lg-8 col-xlg-9 col-md-12">
+                    <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="white-box">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-top-0">Product ID</th>
+                                            <th class="border-top-0">Product Name</th>
+                                            <th class="border-top-0">Quantity</th>
+                                            <th class="border-top-0">Unit Price</th>
+                                            <th class="border-top-0">Sub Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                            foreach($orderdetails as $od)
+                                            {
+                                                echo "<tr>";
+                                                    echo "<td>".$od["ProductId"]."</td>";
+                                                    echo "<td>".$od["ProductName"]."</td>";
+                                                    echo "<td>".$od["Quantity"]."</td>";
+                                                    echo "<td>".$od["UnitPrice"]."</td>";
+                                                    echo "<td>".$od["SubTotalPrice"]."</td>";
+                                                echo "</tr>";
+                                            }
+                                        ?>                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+            </div>
                     </div>
                     <!-- Column -->
                 </div>

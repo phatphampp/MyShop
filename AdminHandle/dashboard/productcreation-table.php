@@ -43,8 +43,17 @@ session_start();
             die("Không kết nối :" . $connect->connect_error);
             exit();
         }
-        $ProductId = $_REQUEST["ProductId"];
-        if (isset($_POST['update'])){
+        //handle creating a product
+        if (isset($_POST['create'])){
+            $target_dir = "../../img/Products/";
+            $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+            $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+            $img="";
+            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                $img = htmlspecialchars( basename( $_FILES["fileToUpload"]["name"]));
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
             $name = $_POST['prodname'];
             $quantity = $_POST['prodquantity'];
             $price = $_POST['prodprice'];
@@ -53,10 +62,8 @@ session_start();
             $origin = $_POST['prodorigin'];
             $producer = $_POST['prodproducer'];
 
-            $sql = "UPDATE products
-                    SET ProductName = '$name', ProductQuantity =$quantity, ProductPrice=$price, ProductDescription='$discription',
-                        CategoryId = $category, OriginId = $origin, ProducerId = $producer
-                    where ProductId = $ProductId;";
+            $sql = "INSERT INTO products(ProductName, ProductQuantity, ProductPrice, ProductDescription, ProductImage, CategoryId, OriginId, ProducerId) 
+                    VALUES('$name', $quantity, $price, '$discription', '$img', $category, $origin, $producer);";
 
 			if ($connect->query($sql) === TRUE) {
 				echo "Successful";
@@ -64,86 +71,9 @@ session_start();
 				echo "Error: " . $sql . "<br>" . $connect->error;
 			}
             header("Location: product-table.php");
-        } elseif (isset($_POST['delete'])) {   
-            $id = $_POST['prodid'];                    
-            $sql = "DELETE from products where ProductId = $ProductId;";
-            if ($connect->query($sql) === TRUE) {
-                echo "Successful";
-            } else {
-                echo "Error: " . $sql . "<br>" . $connect->error;
-            }
-
-            header("Location: product-table.php");
         } elseif (isset($_POST['cancel'])) { 
             header("Location: product-table.php");
-        }
-        
-        //Upload image file
-        if (isset($_POST['confirmfile'])){
-            $target_dir = "../../img/Products/";
-            $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-            $uploadOk = 1;
-            $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-            // Check if image file is a actual image or fake image            
-            $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-            if($check !== false) {
-                echo "File is an image - " . $check["mime"] . ".";
-                $uploadOk = 1;
-            } else {
-                echo "File is not an image.";
-                $uploadOk = 0;
-            }
-            
-
-            // Check if file already exists
-            if (file_exists($target_file)) {
-                echo "Sorry, file already exists.";
-                $uploadOk = 0;
-            }
-
-            // Check file size
-            if ($_FILES["fileToUpload"]["size"] > 500000) {
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-
-            // Allow certain file formats
-            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-            && $imageFileType != "gif" ) {
-                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
-            }
-
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                echo "Sorry, your file was not uploaded.";
-            // if everything is ok, try to upload file
-            } else {
-                if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-                    $img = htmlspecialchars( basename( $_FILES["fileToUpload"]["name"]));
-                    $sql = "UPDATE products
-                            SET ProductImage = '$img'
-                            where ProductId = $ProductId;";
-
-                    if ($connect->query($sql) === TRUE) {
-                        //echo "Successful";
-                    } else {
-                        echo "Error: " . $sql . "<br>" . $connect->error;
-                    }
-                } else {
-                echo "Sorry, there was an error uploading your file.";
-                }
-            }
-        }
-        
-        
-        
-        $sql = "call GetProductDetailById($ProductId);";
-        $result = $connect->query($sql);
-        $prodRow = mysqli_fetch_array($result);
-        $result->close();
-
+        } 
 	    //Đóng database
 	    $connect->close();
     ?>
@@ -349,7 +279,7 @@ session_start();
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title text-uppercase font-medium font-14">Edit product</h4>
+                        <h4 class="page-title text-uppercase font-medium font-14">Create product</h4>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -367,65 +297,41 @@ session_start();
                 <!-- Row -->
                 <div class="row">
                     <!-- Column -->
-                    <div class="col-lg-4 col-xlg-3 col-md-12">
-                        <div class="white-box">
-                            <div class="user-bg">
-                                <div class="overlay-box">
-                                    <div class="user-content">
-                                        <img src="../../img/Products/<?php  echo $prodRow["ProductImage"]?>"
-                                                class="thumb-lg img-circle" alt="img">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="user-btm-box mt-5 d-md-flex text-center">
-                                <form action="" method="post" enctype="multipart/form-data">
-                                    Select image to upload:
-                                    <input type="file" name="fileToUpload" id="fileToUpload">
-                                    <input class="btn btn-success" type="submit" value="Confirm Image" name="confirmfile">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <!-- Column -->
                     <!-- Column -->
                     <div class="col-lg-8 col-xlg-9 col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <form class="form-horizontal form-material" action="" method="post">
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">ID</label>
-                                        <div class="col-md-12 border-bottom p-0">
-                                            <input disabled type="text" name="prodid" value ="<?php  echo $prodRow["ProductId"]?>"
-                                                class="form-control p-0 border-0"> </div>
-                                    </div>
+                                <form name="productForm" class="form-horizontal form-material" action="" method="post" enctype="multipart/form-data">
                                     <div class="form-group mb-4">
                                         <label class="col-md-12 p-0">Name</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input type="text" name="prodname" value ="<?php  echo $prodRow["ProductName"]?>"
+                                            <input type="text" name="prodname" placeholder="Shoe Name"
                                                 class="form-control p-0 border-0"> </div>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">View</label>
+                                        <label class="col-md-12 p-0">Image</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input name="prodview" type="text" disabled value ="<?php  echo $prodRow["ProductView"]?>" class="form-control p-0 border-0">
-                                        </div>
+                                            <input type="file" name="fileToUpload" id="fileToUpload"
+                                                class="form-control p-0 border-0"> </div>
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="col-md-12 p-0">Quantity</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input name="prodquantity" type="text" value ="<?php  echo $prodRow["ProductQuantity"]?>" class="form-control p-0 border-0">
+                                            <input name="prodquantity" type="text" placeholder="50" class="form-control p-0 border-0">
                                         </div>
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="col-md-12 p-0">Price</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input name="prodprice" type="text" value ="<?php  echo $prodRow["ProductPrice"]?>" class="form-control p-0 border-0">
+                                            <input name="prodprice" type="text" placeholder="5000000" class="form-control p-0 border-0">
                                         </div>
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="col-md-12 p-0">Description</label>
                                         <div class="col-md-12 border-bottom p-0">
-                                            <input name="proddiscription" type="text" value ="<?php  echo $prodRow["ProductDescription"]?>" class="form-control p-0 border-0">
+                                            <input name="proddiscription" type="text" placeholder="Shoe Desciption" class="form-control p-0 border-0">
                                         </div>
                                     </div>
 
@@ -435,7 +341,7 @@ session_start();
                                             <select name="prodcategory" class="form-control p-0 border-0">
                                                 <?php foreach($categories as $cat) 
                                                 {
-                                                    if ($prodRow["CategoryId"] == $cat["CategoryId"])
+                                                    if (1 == $cat["CategoryId"])
                                                     {
                                                         echo "<option selected value='".$cat["CategoryId"]."'>".$cat["CategoryName"]."</option>";
                                                     } else {
@@ -451,7 +357,7 @@ session_start();
                                             <select name="prodorigin" class="form-control p-0 border-0">
                                                 <?php foreach($origins as $ori) 
                                                 {
-                                                    if ($prodRow["OriginId"] == $ori["OriginId"])
+                                                    if (1 == $ori["OriginId"])
                                                     {
                                                         echo "<option selected value='".$ori["OriginId"]."'>".$ori["OriginName"]."</option>";
                                                     } else {
@@ -467,7 +373,7 @@ session_start();
                                             <select name="prodproducer" class="form-control p-0 border-0">
                                                 <?php foreach($producers as $prc)
                                                 {
-                                                    if ($prodRow["ProducerId"] == $prc["ProducerId"])
+                                                    if (1 == $prc["ProducerId"])
                                                     {
                                                         echo "<option selected value='".$prc["ProducerId"]."'>".$prc["ProducerName"]."</option>";
                                                     } else {
@@ -482,10 +388,7 @@ session_start();
                                             <input type="submit" name="cancel" class="btn btn-success" value="Cancel"></input>
                                         </div>
                                         <div class="col-sm-6 col-md-12 col-lg-3">
-                                            <input type="submit" name="delete" class="btn btn-success" value="Delete"></input>
-                                        </div>
-                                        <div class="col-sm-6 col-md-12 col-lg-3">
-                                            <input type="submit" name="update" class="btn btn-success" value="Update"></input>
+                                            <input type="submit" name="create" class="btn btn-success" value="Create"></input>
                                         </div>
                                     </div>
                                 </form>
