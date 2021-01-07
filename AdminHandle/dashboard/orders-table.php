@@ -73,9 +73,9 @@ session_start();
         } else {
             $keyword = "%%";
         }
-        $sql = "call GetProductByKeyWord('$keyword');";
+        $sql = "call GetOrderByKeyWord('$keyword');";
         $result = $connect->query($sql); 
-        $products = $result->fetch_all(MYSQLI_BOTH);
+        $orders = $result->fetch_all(MYSQLI_BOTH);
         $result->close();
 	    //Đóng database
 	    $connect->close();
@@ -177,7 +177,7 @@ session_start();
                                 href="profile.php" aria-expanded="false">
                                 <i class="fa fa-user" aria-hidden="true"></i><span class="hide-menu">Profile</span></a>
                         </li>
-                        <li class="sidebar-item selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="product-table.php" aria-expanded="false"><i class="fa fa-table"
                                     aria-hidden="true"></i><span class="hide-menu">Products</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
@@ -189,7 +189,7 @@ session_start();
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="customer-table.php" aria-expanded="false"><i class="fa fa-font"
                                     aria-hidden="true"></i><span class="hide-menu">Customer</span></a></li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        <li class="sidebar-item selected"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="orders-table.php" aria-expanded="false"><i class="fa fa-globe"
                                     aria-hidden="true"></i><span class="hide-menu">Orders</span></a></li>
                     </ul>
@@ -212,16 +212,7 @@ session_start();
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title text-uppercase font-medium font-14">Product page</h4>
-                    </div>
-                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-                        <div class="d-md-flex">
-                            <ol class="breadcrumb ml-auto">
-                                <li></li>
-                            </ol>
-                            <a href="productcreation-table.php"
-                                class="btn btn-danger  d-none d-md-block pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light">New Product</a>
-                        </div>
+                        <h4 class="page-title text-uppercase font-medium font-14">Order page</h4>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -244,30 +235,24 @@ session_start();
                                     <thead>
                                         <tr>
                                             <th class="border-top-0">#</th>
-                                            <th class="border-top-0">Name</th>
-                                            <th class="border-top-0">Quantity</th>
-                                            <th class="border-top-0">Price</th>
-                                            <th class="border-top-0">View</th>
-                                            <th class="border-top-0">Category</th>
-                                            <th class="border-top-0">Origin</th>
-                                            <th class="border-top-0">Producer</th>
+                                            <th class="border-top-0">Customer</th>
+                                            <th class="border-top-0">State</th>
+                                            <th class="border-top-0">Order at</th>
+                                            <th class="border-top-0">Total Price</th>
                                             <th class="border-top-0"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php 
-                                            foreach($products as $prod)
+                                            foreach($orders as $od)
                                             {
                                                 echo "<tr>";
-                                                    echo "<td>".$prod["ProductId"]."</td>";
-                                                    echo "<td>".$prod["ProductName"]."</td>";
-                                                    echo "<td>".$prod["ProductQuantity"]."</td>";
-                                                    echo "<td>".$prod["ProductPrice"]."</td>";
-                                                    echo "<td>".$prod["ProductView"]."</td>";                                                    
-                                                    echo "<td>".$prod["CategoryName"]."</td>";
-                                                    echo "<td>".$prod["OriginName"]."</td>";
-                                                    echo "<td>".$prod["ProducerName"]."</td>"; ?>
-                                                    <td><a href="productdetail-table.php?ProductId=<?php echo $prod["ProductId"] ?>">Edit</a></td> <?php
+                                                    echo "<td>".$od["OrderId"]."</td>";
+                                                    echo "<td>".$od["CustomerFullName"]."</td>";
+                                                    echo "<td>".$od["StateDescription"]."</td>";
+                                                    echo "<td>".$od["CreateAt"]."</td>";
+                                                    echo "<td>".$od["TotalPrice"]."</td>"; ?>
+                                                    <td><a href="orderdetail-table.php?OrderId=<?php echo $od["OrderId"] ?>">Detail</a></td> <?php
                                                 echo "</tr>";
                                             }
                                         ?>                                        

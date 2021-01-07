@@ -30,7 +30,7 @@
 <body>
 	<?php
 		$username = "root"; // Khai báo username
-		$password = "123456";      // Khai báo password
+		$password = "";      // Khai báo password
 		$server   = "localhost";   // Khai báo server
 		$dbname   = "vehicles_store";      // Khai báo database
 
@@ -116,6 +116,15 @@
 						<button class="login100-form-btn">
 							Sign up
 						</button>
+					</div>
+					<div class="text-center">
+						<span class="txt1">
+							Already signed up?
+						</span>
+
+						<a href="../login/index.php" class="txt2 hov1">
+							Log in
+						</a>
 					</div>
 				</form>
 			</div>

@@ -57,7 +57,7 @@ create table Employees (
 );
 create table OrderState (
 	StateId int UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Description NVARCHAR(200) NOT NULL
+    StateDescription NVARCHAR(200) NOT NULL
 );
 
 create table Orders (
@@ -67,7 +67,7 @@ create table Orders (
 	CreateAt DateTime default current_timestamp,
     TotalPrice int,
     foreign key (CustomerId) references Customers(CustomerId),
-    foreign key (State) references OrderState(StateKey)
+    foreign key (StateId) references OrderState(StateId)
 );
 
 create table OrderDetails (
