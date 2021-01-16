@@ -416,5 +416,7 @@ input.input100 {
   }
 }
 
-
+.captcha{
+  text-shadow: 5px 5px;
+}
 

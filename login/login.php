@@ -4,11 +4,11 @@ session_start();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V19</title>
+	<title>PHM Store - Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="icon" type="image/png" href="../img/logo.png"/>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
 <!--===============================================================================================-->
@@ -64,10 +64,14 @@ session_start();
 
 			$_SESSION['userId'] = $row["CustomerId"];
 			
+			$_SESSION['CustomerUserName']= $row["CustomerUsername"];
 			header("Location: ../index.php");
 		}else {
-			$error = "Your Login Name or Password is invalid";
-			echo $error;
+			// $error = "Your Login Name or Password is invalid";
+			// echo $error;
+			echo '<script language="javascript">';
+			echo 'alert("Your Login Name or Password is invalid")';
+			echo '</script>';
 		}
 	}
 	//Đóng database
@@ -116,6 +120,15 @@ session_start();
 
 						<a href="../createAccount/index.php" class="txt2 hov1">
 							Sign up
+						</a>
+					</div>
+					<div class="text-center">
+						<span class="txt1">
+							Visit
+						</span>
+
+						<a href="../index.php" class="txt2 hov1">
+							Shop
 						</a>
 					</div>
 				</form>

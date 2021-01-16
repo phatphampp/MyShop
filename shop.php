@@ -12,13 +12,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shop Page- Ustora Demo</title>
+    <title>PHM Store - Shop</title>
     
     <!-- Google Fonts -->
     <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,200,300,700,600' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,100' rel='stylesheet' type='text/css'>
     
+    <link rel="icon" type="image/png" href="img/logo.png"/>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     
@@ -66,10 +67,31 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="user-menu">
-                        <ul>
-                            <li><a href="#"><i class="fa fa-user"></i> My Account</a></li>
-                            <li><a href="./login/login.php"><i class="fa fa-user"></i> Login</a></li>
-                            <li><a href="./createAccount/index.php"><i class="fa fa-user"></i> Create Account</a></li>                            
+                    <ul>
+                            
+                            <?php 
+                                if(isset($_SESSION["userId"]))
+                                {
+                                    ?>
+                                    <li>
+                                        <a href="customer-account/profile.php">
+                                            <i class="fa fa-user"></i> 
+                                            <?php 
+                                                $tmp = $_SESSION["CustomerUserName"];
+                                                echo $tmp;
+                                            ?>
+                                        </a>
+                                    </li>
+                                <?php
+                                }
+                                else{
+                                    
+                                    ?>
+                                    <li><a href="./login/login.php"><i class="fa fa-user"></i> Login</a></li>
+                                    <li><a href="./createAccount/index.php"><i class="fa fa-user"></i> Create Account</a></li>
+                                    <?php
+                                }
+                            ?>                            
                         </ul>
                     </div>
                 </div>
@@ -317,7 +339,7 @@
             <div class="row">
                 <div class="col-md-3 col-sm-6">
                     <div class="footer-about-us">
-                        <h2>u<span>Stora</span></h2>
+                        <h2><span>PHM</span></h2>
                         <p>Website information: This is a project for web1 programming subject to practice with the guidance of teacher Tran Van Quy </p>
                         <p>Address: 227 Nguyen Van Cu, Ward 4, District 5, HCMC</p>
                         <div class="footer-social">
