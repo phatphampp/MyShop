@@ -105,11 +105,11 @@ session_start();
 
 					<div class="text-center p-t-45 p-b-4">
 						<span class="txt1">
-							Forgot
+							Login with Admin Permission
 						</span>
 
-						<a href="#" class="txt2 hov1">
-							Username / Password?
+						<a href="../AdminHandle/login/index.php" class="txt2 hov1">
+							Login
 						</a>
 					</div>
 

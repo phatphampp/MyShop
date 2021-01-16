@@ -113,6 +113,7 @@
                                     ?>
                                     <li><a href="./login/login.php"><i class="fa fa-user"></i> Login</a></li>
                                     <li><a href="./createAccount/index.php"><i class="fa fa-user"></i> Create Account</a></li>
+                                    
                                     <?php
                                 }
                             ?>                            
