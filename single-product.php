@@ -1,3 +1,101 @@
+<?php
+    session_start();
+?>
+<!-- Thông tin giỏ hàng -->
+<?php 
+        if(isset($_SESSION["cart_item"]))
+        {
+            $item_price = $_SESSION["item_price"];
+            $item_quantity = $_SESSION["item_quantity"];
+        }else{
+            $item_price = 0;
+            $item_quantity = 0;
+        }
+    ?>
+<!-- Tăng lược xem -->
+<?php
+    $username = "root"; // Khai báo username
+    $password = "";      // Khai báo password
+    $server   = "localhost";   // Khai báo server
+    $dbname   = "vehicles_store";      // Khai báo database
+
+    // Kết nối database tintuc
+    $connect = new mysqli($server, $username, $password, $dbname);
+
+    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+    if ($connect->connect_error) {
+        die("Không kết nối :" . $conn->connect_error);
+        exit();
+    }
+
+    //Khai báo giá trị ban đầu, nếu không có thì khi chưa submit câu lệnh insert sẽ báo lỗi
+    $ProductId = $_REQUEST["ProductId"];
+
+    $sql = "call IncreaseProductView($ProductId);";
+    $result = $connect->query($sql);
+
+    //Lấy giá trị POST từ form vừa submit
+    $sql = "call GetProductDetailById($ProductId);";
+    $result = $connect->query($sql);
+    $row = mysqli_fetch_array($result);  
+    $connect->close();
+    
+?>                        
+<!-- Lấy thông tin sản phẩm cùng hãng-->
+<?php 
+
+    // Kết nối database tintuc
+    $connect = new mysqli($server, $username, $password, $dbname);
+
+    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+    if ($connect->connect_error) {
+        die("Không kết nối :" . $connect->connect_error);
+        exit();
+    }
+    $sql = "call GetProductByProducerId($row[ProducerId]);";
+    $result = $connect->query($sql);
+    
+    $ProducerProduct = $result->fetch_all(MYSQLI_BOTH);
+    $result->close();
+    //Đóng database
+	$connect->close(); 
+?>
+<!-- Lấy thông tin sản phẩm liên quan-->
+<?php 
+    // Kết nối database tintuc
+    $connect = new mysqli($server, $username, $password, $dbname);
+
+    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+    if ($connect->connect_error) {
+        die("Không kết nối :" . $connect->connect_error);
+        exit();
+    }
+    $sql = "call GetRelatedProduct($row[CategoryId], $row[ProducerId]);";
+    $result = $connect->query($sql);
+    
+    $RelatedProduct = $result->fetch_all(MYSQLI_BOTH);
+    $result->close();
+    //Đóng database
+	$connect->close(); 
+?>
+<!-- Lấy thông tin sản phẩm cùng loại-->
+<?php 
+    // Kết nối database tintuc
+    $connect = new mysqli($server, $username, $password, $dbname);
+
+    //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
+    if ($connect->connect_error) {
+        die("Không kết nối :" . $connect->connect_error);
+        exit();
+    }
+    $sql = "call GetProductByCategoryId($row[CategoryId]);";
+    $result = $connect->query($sql);
+    
+    $CateProduct = $result->fetch_all(MYSQLI_BOTH);
+    $result->close();
+    //Đóng database
+	$connect->close(); 
+?>
 <!DOCTYPE html>
 <!--
 	ustora by freshdesignweb.com
@@ -27,12 +125,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/responsive.css">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
   </head>
   <body>
     
@@ -43,34 +135,8 @@
                     <div class="user-menu">
                         <ul>
                             <li><a href="#"><i class="fa fa-user"></i> My Account</a></li>
-                            <li><a href="#"><i class="fa fa-heart"></i> Wishlist</a></li>
-                            <li><a href="cart.html"><i class="fa fa-user"></i> My Cart</a></li>
-                            <li><a href="checkout.html"><i class="fa fa-user"></i> Checkout</a></li>
-                            <li><a href="#"><i class="fa fa-user"></i> Login</a></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="header-right">
-                        <ul class="list-unstyled list-inline">
-                            <li class="dropdown dropdown-small">
-                                <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#"><span class="key">currency :</span><span class="value">USD </span><b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">USD</a></li>
-                                    <li><a href="#">INR</a></li>
-                                    <li><a href="#">GBP</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="dropdown dropdown-small">
-                                <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#"><span class="key">language :</span><span class="value">English </span><b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">English</a></li>
-                                    <li><a href="#">French</a></li>
-                                    <li><a href="#">German</a></li>
-                                </ul>
-                            </li>
+                            <li><a href="./login/login.php"><i class="fa fa-user"></i> Login</a></li>
+                            <li><a href="./createAccount/index.php"><i class="fa fa-user"></i> Create Account</a></li>                            
                         </ul>
                     </div>
                 </div>
@@ -89,7 +155,7 @@
                 
                 <div class="col-sm-6">
                     <div class="shopping-item">
-                        <a href="cart.html">Cart - <span class="cart-amunt">$100</span> <i class="fa fa-shopping-cart"></i> <span class="product-count">5</span></a>
+                        <a href="cart.php">Cart - <span class="cart-amunt">$<?php echo $item_price?></span> <i class="fa fa-shopping-cart"></i> <span class="product-count"><?php echo $item_quantity?></span></a>
                     </div>
                 </div>
             </div>
@@ -109,15 +175,14 @@
                 </div> 
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="shop.html">Shop page</a></li>
-                        <li class="active"><a href="single-product.html">Single product</a></li>
-                        <li><a href="cart.html">Cart</a></li>
-                        <li><a href="checkout.html">Checkout</a></li>
-                        <li><a href="#">Category</a></li>
-                        <li><a href="#">Others</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="shop.php">Shop</a></li>
+                        <li><a href="follow-producer.php?ProducerId=1">Adidas</a></li>
+                        <li><a href="follow-producer.php?ProducerId=2">Nike</a></li>
+                        <li><a href="follow-producer.php?ProducerId=3">Vans</a></li>
+                        <li class="active"><a href="">Detail</a></li>
                     </ul>
+                </div>
                 </div>  
             </div>
         </div>
@@ -128,7 +193,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="product-bit-title text-center">
-                        <h2>Shop</h2>
+                        <h2>Product Detail</h2>
                     </div>
                 </div>
             </div>
@@ -141,88 +206,44 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
+                    
+                    
                     <div class="single-sidebar">
-                        <h2 class="sidebar-title">Search Products</h2>
-                        <form action="">
-                            <input type="text" placeholder="Search products...">
-                            <input type="submit" value="Search">
-                        </form>
+                        <h2 class="sidebar-title">Same Producer</h2>
+                        <?php 
+                            foreach($ProducerProduct as $item)
+                            {
+                                ?>
+                                     <div class="thubmnail-recent">
+                                        <img src="img/Products/<?php echo $item["ProductImage"]; ?>" class="recent-thumb" alt="">
+                                        <h2><a href="single-product.php?ProductId=<?php echo $item["ProductId"]?>"><?php echo $item["ProductName"]; ?></a></h2>
+                                        <div class="product-sidebar-price">
+                                            <ins>$<?php echo $item["ProductPrice"]?></ins>
+                                        </div>                             
+                                    </div>
+                                <?php
+                            }
+                        ?>
+
                     </div>
                     
                     <div class="single-sidebar">
-                        <h2 class="sidebar-title">Products</h2>
-                        <div class="thubmnail-recent">
-                            <img src="img/product-thumb-1.jpg" class="recent-thumb" alt="">
-                            <h2><a href="">Sony Smart TV - 2015</a></h2>
-                            <div class="product-sidebar-price">
-                                <ins>$700.00</ins> <del>$100.00</del>
-                            </div>                             
-                        </div>
-                        <div class="thubmnail-recent">
-                            <img src="img/product-thumb-1.jpg" class="recent-thumb" alt="">
-                            <h2><a href="">Sony Smart TV - 2015</a></h2>
-                            <div class="product-sidebar-price">
-                                <ins>$700.00</ins> <del>$100.00</del>
-                            </div>                             
-                        </div>
-                        <div class="thubmnail-recent">
-                            <img src="img/product-thumb-1.jpg" class="recent-thumb" alt="">
-                            <h2><a href="">Sony Smart TV - 2015</a></h2>
-                            <div class="product-sidebar-price">
-                                <ins>$700.00</ins> <del>$100.00</del>
-                            </div>                             
-                        </div>
-                        <div class="thubmnail-recent">
-                            <img src="img/product-thumb-1.jpg" class="recent-thumb" alt="">
-                            <h2><a href="">Sony Smart TV - 2015</a></h2>
-                            <div class="product-sidebar-price">
-                                <ins>$700.00</ins> <del>$100.00</del>
-                            </div>                             
-                        </div>
-                    </div>
-                    
-                    <div class="single-sidebar">
-                        <h2 class="sidebar-title">Recent Posts</h2>
+                        <h2 class="sidebar-title">Same Category</h2>
                         <ul>
-                            <li><a href="">Sony Smart TV - 2015</a></li>
-                            <li><a href="">Sony Smart TV - 2015</a></li>
-                            <li><a href="">Sony Smart TV - 2015</a></li>
-                            <li><a href="">Sony Smart TV - 2015</a></li>
-                            <li><a href="">Sony Smart TV - 2015</a></li>
+                            <?php 
+                                foreach($CateProduct as $item)
+                                {
+                                    ?>
+                                        <li><a href="single-product.php?ProductId=<?php echo $item["ProductId"]?>"><?php echo $item["ProductName"]?></a></li>
+                                    <?php
+                                }
+                            ?>
                         </ul>
                     </div>
                 </div>
                 
                 <div class="col-md-8">
                     <div class="product-content-right">
-                        <div class="product-breadcroumb">
-                            <a href="">Home</a>
-                            <a href="">Category Name</a>
-                            <a href="">Sony Smart TV - 2015</a>
-                        </div>
-                        <?php
-                            $username = "root"; // Khai báo username
-                            $password = "";      // Khai báo password
-                            $server   = "localhost";   // Khai báo server
-                            $dbname   = "vehicles_store";      // Khai báo database
-
-                            // Kết nối database tintuc
-                            $connect = new mysqli($server, $username, $password, $dbname);
-
-                            //Nếu kết nối bị lỗi thì xuất báo lỗi và thoát.
-                            if ($connect->connect_error) {
-                                die("Không kết nối :" . $conn->connect_error);
-                                exit();
-                            }
-
-                            //Khai báo giá trị ban đầu, nếu không có thì khi chưa submit câu lệnh insert sẽ báo lỗi
-                            $ProductId = $_REQUEST["ProductId"];
-
-                            //Lấy giá trị POST từ form vừa submit
-                            $sql = "call GetProductDetailById($ProductId);";
-                            $result = $connect->query($sql);
-                            $row = mysqli_fetch_array($result)        
-                            ?>
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="product-images">
@@ -239,15 +260,18 @@
                                         <ins>$<?php  echo $row["ProductPrice"]?></ins>
                                     </div>    
                                     
-                                    <form action="" class="cart">
+                                    <form action="carthandler.php" class="cart" method="GET">
                                         <div class="quantity">
-                                            <input type="number" size="4" class="input-text qty text" title="Qty" value="1" name="quantity" min="1" step="1">
+                                            <input type="number" size="4" class="input-text qty text" title="Qty" value="1" name="quantity" min="1" step="1" >
+                                            <input type="text" value="add" name="action" hidden>
+                                            <input type="text" value="<?php echo $row["ProductId"]; ?>" name="ProductId" hidden>
                                         </div>
                                         <button class="add_to_cart_button" type="submit">Add to cart</button>
                                     </form>   
                                     
                                     <div class="product-inner-category">
-                                        <p>Category: <a href="">Summer</a>. Tags: <a href="">awesome</a>, <a href="">best</a>, <a href="">sale</a>, <a href="">shoes</a>. </p>
+                                        <p>Category: <a><?php echo $row["CategoryName"]; ?></a> | 
+                                            View: <a><?php echo $row["ProductView"]; ?></a> </p>
                                     </div> 
                                     
                                     <div role="tabpanel">
@@ -291,95 +315,29 @@
                         <div class="related-products-wrapper">
                             <h2 class="related-products-title">Related Products</h2>
                             <div class="related-products-carousel">
-                                <div class="single-product">
-                                    <div class="product-f-image">
-                                        <img src="img/product-1.jpg" alt="">
-                                        <div class="product-hover">
-                                            <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                            <a href="" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                        </div>
-                                    </div>
+                                <?php 
+                                    foreach($RelatedProduct as $item)
+                                    {
+                                        ?>
+                                        <div class="single-product">
+                                            <div class="product-f-image">
+                                                <img src="img/Products/<?php echo $item["ProductImage"]?>" alt="">
+                                                <div class="product-hover">
+                                                    <a href="carthandler.php?action=add&ProductId=<?php echo $item["ProductId"]; ?>&quantity=1" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
+                                                    <a href="single-product.php?ProductId=<?php echo $item["ProductId"]?>" class="view-details-link"><i class="fa fa-link"></i> See details</a>
+                                                </div>
+                                            </div>
 
-                                    <h2><a href="">Sony Smart TV - 2015</a></h2>
+                                            <h2><a href="single-product.php?ProductId=<?php echo $item["ProductId"]?>"><?php echo $item["ProductName"]; ?></a></h2>
 
-                                    <div class="product-carousel-price">
-                                        <ins>$700.00</ins> <del>$100.00</del>
-                                    </div> 
-                                </div>
-                                <div class="single-product">
-                                    <div class="product-f-image">
-                                        <img src="img/product-2.jpg" alt="">
-                                        <div class="product-hover">
-                                            <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                            <a href="" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                        </div>
-                                    </div>
-
-                                    <h2><a href="">Apple new mac book 2015 March :P</a></h2>
-                                    <div class="product-carousel-price">
-                                        <ins>$899.00</ins> <del>$999.00</del>
-                                    </div> 
-                                </div>
-                                <div class="single-product">
-                                    <div class="product-f-image">
-                                        <img src="img/product-3.jpg" alt="">
-                                        <div class="product-hover">
-                                            <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                            <a href="" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                        </div>
-                                    </div>
-
-                                    <h2><a href="">Apple new i phone 6</a></h2>
-
-                                    <div class="product-carousel-price">
-                                        <ins>$400.00</ins> <del>$425.00</del>
-                                    </div>                                 
-                                </div>
-                                <div class="single-product">
-                                    <div class="product-f-image">
-                                        <img src="img/product-4.jpg" alt="">
-                                        <div class="product-hover">
-                                            <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                            <a href="" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                        </div>
-                                    </div>
-
-                                    <h2><a href="">Sony playstation microsoft</a></h2>
-
-                                    <div class="product-carousel-price">
-                                        <ins>$200.00</ins> <del>$225.00</del>
-                                    </div>                            
-                                </div>
-                                <div class="single-product">
-                                    <div class="product-f-image">
-                                        <img src="img/product-5.jpg" alt="">
-                                        <div class="product-hover">
-                                            <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                            <a href="" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                        </div>
-                                    </div>
-
-                                    <h2><a href="">Sony Smart Air Condtion</a></h2>
-
-                                    <div class="product-carousel-price">
-                                        <ins>$1200.00</ins> <del>$1355.00</del>
-                                    </div>                                 
-                                </div>
-                                <div class="single-product">
-                                    <div class="product-f-image">
-                                        <img src="img/product-6.jpg" alt="">
-                                        <div class="product-hover">
-                                            <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add to cart</a>
-                                            <a href="" class="view-details-link"><i class="fa fa-link"></i> See details</a>
-                                        </div>
-                                    </div>
-
-                                    <h2><a href="">Samsung gallaxy note 4</a></h2>
-
-                                    <div class="product-carousel-price">
-                                        <ins>$400.00</ins>
-                                    </div>                            
-                                </div>                                    
+                                            <div class="product-carousel-price">
+                                                <ins>$<?php echo $item["ProductPrice"]?></ins>
+                                            </div> 
+                                        </div>                                        
+                                        <?php
+                                    }
+                                ?>
+                                                                    
                             </div>
                         </div>
                     </div>                    
@@ -412,10 +370,19 @@
                     <div class="footer-menu">
                         <h2 class="footer-wid-title">User Navigation </h2>
                         <ul>
-                            <li><a href="#">My account</a></li>
-                            <li><a href="#">Order history</a></li>
-                            <li><a href="#">Vendor contact</a></li>
-                            <li><a href="#">Front page</a></li>
+                            <li><a href="my-account.php">My account</a></li>
+                            <li>
+                                <p> Producer: Pham Thanh Phat</p>
+                                <p> ID: 18600204 </p>
+                            </li>
+                            <li>
+                                <p> Producer: Huynh Long Hai</p>
+                                <p> ID: 18600005 </p>
+                            </li>
+                            <li>
+                                <p> Producer: Nguyen Nhat Minh</p>
+                                <p> ID: 18600168 </p>
+                            </li>
                         </ul>                        
                     </div>
                 </div>
@@ -424,38 +391,16 @@
                     <div class="footer-menu">
                         <h2 class="footer-wid-title">Categories</h2>
                         <ul>
-                            <li><a href="#">All products</a></li>
-                            <li><a href="#">Adias</a></li>
-                            <li><a href="#">Nike</a></li>
-                            <li><a href="#">Vans</a></li>
+                            <li><a href="shop.php">All products</a></li>
+                            <li><a href="follow-producer.php?ProducerId=1">Adias</a></li>
+                            <li><a href="follow-producer.php?ProducerId=2">Nike</a></li>
+                            <li><a href="follow-producer.php?ProducerId=3">Vans</a></li>
                         </ul>                        
                     </div>
                 </div>
                 
-                <div class="col-md-3 col-sm-6">
-                    <div >
-                        <h2 class="footer-wid-title">Newsletter</h2>
-                        <p>Sign up to our newsletter and get exclusive deals you wont find anywhere else straight to your inbox!</p>
-                        <div class="newsletter-form">
-                            <form action="#">
-                                <input type="email" placeholder="Type your email">
-                                <input type="submit" value="Subscribe">
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                   
-                        <p> Producer: Pham Thanh Phat</p>
-                        <p>fb: <a href="https://www.facebook.com/profile.php?id=100008421391601" target="_blank"> facebook.com </a> </p> 
-                        
-                        <p> Producer: Huynh Long Hai</p>
-                        <p>fb: <a href="https://www.facebook.com/profile.php?id=100010627781607" target="_blank"> facebook.com </a> </p> 
-                   
-                        <p> Producer: Nguyen Nhat Minh</p>
-                        <p>fb: <a href="https://www.facebook.com/profile.php?id=100006546813311" target="_blank"> facebook.com </a> </p> 
-                    
-                </div>
+                
+                
                 <div class="col-md-3 col-sm-6">
                 <img src="./img/logohcmus.png" style="height: 70px; wight: 70px" >
                 <p> Website HCMUS: <a href="https://www.hcmus.edu.vn/" target="_blank">hcmus.edu.vn </a></p>

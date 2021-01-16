@@ -119,6 +119,15 @@
 							Sign up
 						</button>
 					</div>
+					<div class="text-center">
+						<span class="txt1">
+							Already signed up?
+						</span>
+
+						<a href="../login/login.php" class="txt2 hov1">
+							Log in
+						</a>
+					</div>
 				</form>
 			</div>
 		</div>

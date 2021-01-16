@@ -1,6 +1,9 @@
 <?php
     session_start();
 ?>
+<?php 
+    $ProducerId = $_REQUEST["ProducerId"];
+?>
 <!DOCTYPE html>
 <!--
 	ustora by freshdesignweb.com
@@ -50,7 +53,6 @@
             exit();
         }
     ?>
-    <!-- Thông tin giỏ hàng -->
     <?php 
         if(isset($_SESSION["cart_item"]))
         {
@@ -89,6 +91,7 @@
                 <div class="col-sm-6">
                     <div>
                         <form action="" method="get">
+                            <input type="text" value=<?php echo $ProducerId;?> name="ProducerId" hidden/>
                             <input type="text" name="search" placeholder="Search products..."/>
                             <input type="submit" name="ok" value="search" />
                         </form>
@@ -119,12 +122,30 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="index.php">Home</a></li>
-                        <li class="active"><a href="shop.php">Shop</a></li>
-                        <li><a href="follow-producer.php?ProducerId=1">Adidas</a></li>
-                        <li><a href="follow-producer.php?ProducerId=2">Nike</a></li>
-                        <li><a href="follow-producer.php?ProducerId=3">Vans</a></li>
+                        <li><a href="shop.php">Shop</a></li>
+                        <?php 
+                            if($ProducerId == 1)
+                            {
+                                echo '<li class="active"><a href="follow-producer.php?ProducerId=1">Adidas</a></li>';
+                                echo '<li><a href="follow-producer.php?ProducerId=2">Nike</a></li>';
+                                echo '<li><a href="follow-producer.php?ProducerId=3">Vans</a></li>';
+                            }
+                            elseif ($ProducerId == 2) {
+                                echo '<li><a href="follow-producer.php?ProducerId=1">Adidas</a></li>';
+                                echo '<li class="active"><a href="follow-producer.php?ProducerId=2">Nike</a></li>';
+                                echo '<li><a href="follow-producer.php?ProducerId=3">Vans</a></li>';
+                            }
+                            else{
+                                echo '<li><a href="follow-producer.php?ProducerId=1">Adidas</a></li>';
+                                echo '<li><a href="follow-producer.php?ProducerId=2">Nike</a></li>';
+                                echo '<li class="active"><a href="follow-producer.php?ProducerId=3">Vans</a></li>';
+                            }
+                        ?>
+                        
+                        
+                        
                     </ul>
-                </div>  
+                </div> 
             </div>
         </div>
     </div> <!-- End mainmenu area -->
@@ -147,7 +168,7 @@
         <div class="container">
             <?php 
                 // BƯỚC 2: TÌM TỔNG SỐ RECORDS
-                $result = mysqli_query($connect, 'select count(ProductId) as total from products');
+                $result = mysqli_query($connect, "select count(ProductId) as total from products where ProducerId=$ProducerId");
                 $row = mysqli_fetch_assoc($result);
                 $total_records = $row['total'];
         
@@ -172,7 +193,7 @@
         
                 // BƯỚC 5: TRUY VẤN LẤY DANH SÁCH TIN TỨC
                 // Có limit và start rồi thì truy vấn CSDL lấy danh sách tin tức
-                $result = mysqli_query($connect, "SELECT * FROM products LIMIT $start, $limit");
+                $result = mysqli_query($connect, "SELECT * FROM products Where ProducerId=$ProducerId LIMIT $start, $limit");
             ?>
             <div class="row">
             
@@ -193,8 +214,7 @@
                              
                     // Thực thi câu truy vấn
                     // $sql = mysql_query($query);
-                    $sql = $connect -> query("select * from products where ProductName like '%$search%'");
-     
+                    $sql = $connect -> query("select * from products where ProducerId = $ProducerId and ProductName like '%$search%'");
                     // Đếm số đong trả về trong sql.
                     $num = mysqli_num_rows($sql);
      
@@ -252,7 +272,6 @@
                 </div>
                 <?php }?>
         </div>
-        
         <div class="pagination">
            <?php 
             // PHẦN HIỂN THỊ PHÂN TRANG
@@ -260,7 +279,7 @@
  
             // nếu current_page > 1 và total_page > 1 mới hiển thị nút prev
             if ($current_page > 1 && $total_page > 1){
-                echo '<a href="shop.php?page='.($current_page-1).'">Prev</a> | ';
+                echo '<a href="follow-producer.php?ProducerId='.$ProducerId.'&page='.($current_page-1).'">Prev</a> | ';
             }
  
             // Lặp khoảng giữa
@@ -271,13 +290,13 @@
                     echo '<span>'.$i.'</span> | ';
                 }
                 else{
-                    echo '<a href="shop.php?page='.$i.'">'.$i.'</a> | ';
+                    echo '<a href="follow-producer.php?ProducerId='.$ProducerId.'&page='.$i.'">'.$i.'</a> | ';
                 }
             }
  
             // nếu current_page < $total_page và total_page > 1 mới hiển thị nút prev
             if ($current_page < $total_page && $total_page > 1){
-                echo '<a href="shop.php?page='.($current_page+1).'">Next</a> | ';
+                echo '<a href="follow-producer.php?ProducerId='.$ProducerId.'&page='.($current_page+1).'">Next</a> | ';
             }
            ?>
         </div>

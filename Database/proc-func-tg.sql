@@ -131,3 +131,52 @@ BEGIN
     where od.ProductId = p.ProductId and OrderId = OdId;
 END $
 DELIMITER ; 
+
+DELIMITER $	
+CREATE PROCEDURE GetNewOrder()
+BEGIN
+	select * from orders  
+    order by CreateAt DESC
+    limit 1;
+END $
+DELIMITER ; 
+
+DELIMITER $	
+CREATE PROCEDURE IncreaseProductView(in ProId int)
+BEGIN
+	UPDATE products
+	SET ProductView = ProductView + 1
+	WHERE ProductId = ProId;
+END $
+DELIMITER ; 
+
+DELIMITER $	
+CREATE PROCEDURE GetProductByProducerId(in Pro int)
+BEGIN
+	select *
+    from products
+    where ProducerId = Pro
+    limit 4;
+END $
+DELIMITER ; 
+
+DELIMITER $	
+CREATE PROCEDURE GetRelatedProduct(in Cat int, in Prc int)
+BEGIN
+	select *
+    from products
+    where ProducerId = Prc and CategoryId = Cat
+    limit 6;
+END $
+DELIMITER ; 
+
+DELIMITER $	
+CREATE PROCEDURE GetProductByCategoryId(in Cat int)
+BEGIN
+	select *
+    from products
+    where CategoryId = Cat
+    limit 5;
+END $
+DELIMITER ; 
+

@@ -55,15 +55,16 @@ session_start();
 		
 		$sql = "SELECT * FROM customers WHERE CustomerUsername = '$myusername' and CustomerPassword = '$mypassword'";
 		$result = $connect->query($sql);
-		
 		$count = mysqli_num_rows($result);
 		
 		// If result matched $myusername and $mypassword, table row must be 1 row
 			
 		if($count == 1) {
-			$_SESSION['login_user'] = $myusername;
+			$row = mysqli_fetch_array($result);
+
+			$_SESSION['userId'] = $row["CustomerId"];
 			
-			header("Location: index.php");
+			header("Location: ../index.php");
 		}else {
 			$error = "Your Login Name or Password is invalid";
 			echo $error;
@@ -113,7 +114,7 @@ session_start();
 							Create an account?
 						</span>
 
-						<a href="#" class="txt2 hov1">
+						<a href="../createAccount/index.php" class="txt2 hov1">
 							Sign up
 						</a>
 					</div>
