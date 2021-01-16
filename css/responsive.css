@@ -46,7 +46,7 @@ input[type="submit"], button[type="submit"] {
   height: 200px;
 }    
 .footer-top-area {
-  padding: 35px 0 125px;
+  padding: 35px 0 1px;
 }  
 div.cart-collaterals ul.products li.product {
   width: 190px;
@@ -124,7 +124,7 @@ div.cart-collaterals ul.products li.product {
   height: 200px;
 }    
 .footer-top-area {
-  padding: 35px 0 125px;
+  padding: 35px 0 1px;
 } 
     
 .single-product-widget, .footer-about-us, .footer-menu {
